@@ -1,11 +1,13 @@
 import { css } from "@emotion/react";
-import Button from '@mui/material/Button';
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const headerContainer = css({
   display: "flex",
+  justifyContent: "center",
   alignItems: "center",
-  position: "relative",
+  flexDirection: "column",
+  gap: "16px",
   width: "100%",
   minHeight: "56px",
   marginTop: "24px",
@@ -13,9 +15,6 @@ const headerContainer = css({
 });
 
 const TitleStyles = css({
-  position: "absolute",
-  left: "45%",
-  transform: "translateX(-50%)",
   fontSize: "24px",
   color: "#000",
   fontWeight: "600",
@@ -24,32 +23,25 @@ const TitleStyles = css({
 });
 
 const buttonStyles = css({
-  marginLeft: "86%",
-  backgroundColor: "#000",
-  color: "#fff",
-  "&:hover": {
-    backgroundColor: "#333",
-  },
+
 });
 
-const Patients = () => {
+const Register = () => {
   return (
     <>
       <div css={headerContainer}>
-        <h1 css={TitleStyles}>Pacientes</h1>
+        <h1 css={TitleStyles}>Cadastro</h1>
         <Button
           component={Link}
-          to="/patient/register"
+          to="/patients"
           variant="contained"
           css={buttonStyles}
         >
-          Adicionar
+          Voltar
         </Button>
       </div>
-      {/* ...restante do conteúdo... */}
     </>
   );
-};
+}
 
-export default Patients;
-
+export default Register;

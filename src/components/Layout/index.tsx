@@ -17,21 +17,24 @@ import ListItemText from '@mui/material/ListItemText';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { Outlet } from 'react-router-dom';
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, Divider } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const drawerWidth = 200;
+const drawerWidth = 280;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
 }>(({ theme, open }) => ({
   flexGrow: 1,
-  padding: theme.spacing(3),
+  minWidth: 0,
+  padding: theme.spacing(2),
   transition: theme.transitions.create('margin', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  marginLeft: open ? drawerWidth : 0,
+  marginTop: theme.spacing(8),
+  display: !open ? 'flex' : 'block', // Centraliza só quando fechado
+  justifyContent: !open ? 'center' : 'initial',
 }));
 
 const AppBar = styled(MuiAppBar, {
@@ -122,14 +125,23 @@ export default function Layout() {
       {/* Barra lateral */}
       <Drawer
         sx={{
-          width: drawerWidth,
+          width: open ? drawerWidth : 0,
           flexShrink: 0,
-          '& .MuiDrawer-paper': { // é o responsável pelo estilo do papel
-            width: drawerWidth,
+          transition: theme => theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
+          '& .MuiDrawer-paper': {
+            width: open ? drawerWidth : 0,
             boxSizing: 'border-box',
-            backgroundColor: "#65ACD6",
-            boxShadow: 'none', // Remove o box-shadow
-            border: 'none', // Remove qualquer borda
+            backgroundColor: "#C5E4F2",
+            boxShadow: 'none',
+            border: 'none',
+            transition: theme => theme.transitions.create('width', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
+            overflowX: 'hidden',
           },
         }}
         variant="persistent"
@@ -141,30 +153,60 @@ export default function Layout() {
           <img src="casadoamor.png" alt="Icone Casa do Amor" style={{
             margin: '0 auto',
           }} />
+
         </DrawerHeader>
+
         <List>
-          {/* <ListItem disablePadding>
-            <ListItemButton
-              component={Link}
-              to="/users" // rota para Usuários
-              sx={{ color: 'white' }}
-            >
-              <ListItemIcon sx={{ color: 'white' }}>
-                <PeopleAltIcon />
-              </ListItemIcon>
-              <ListItemText primary="Usuários" sx={{ color: 'white' }} />
-            </ListItemButton>
-          </ListItem> */}
+          <Divider sx={{
+            maxWidth: '230px',
+            margin: '0 auto',
+          }} />
           <ListItem disablePadding>
             <ListItemButton
               component={Link}
-              to="/patients" // rota para Pacientes
-              sx={{ color: 'white' }}
+              to="/users"
+              sx={{
+                maxWidth: '280px',
+                margin: '0 auto',
+                padding: '8px 75px',
+              }}
             >
-              <ListItemIcon sx={{ color: 'white' }}>
+              <ListItemIcon sx={{ color: '#000000da', minWidth: 0, mr: 1 }}>
+                <PeopleAltIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Usuários"
+                sx={{ textAlign: 'center' }}
+                slotProps={{
+                  primary: {
+                    sx: { color: '#000000da', fontWeight: 'bold' }
+                  }
+                }}
+              />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton
+              component={Link}
+              to="/patients"
+              sx={{
+                maxWidth: '280px',
+                margin: '0 auto',
+                padding: '8px 75px',
+              }}
+            >
+              <ListItemIcon sx={{ color: '#000000da', minWidth: 0, mr: 1 }}>
                 <GroupsIcon />
               </ListItemIcon>
-              <ListItemText primary="Pacientes" sx={{ color: 'white' }} />
+              <ListItemText
+                primary="Pacientes"
+                sx={{ textAlign: 'center' }}
+                slotProps={{
+                  primary: {
+                    sx: { color: '#000000da', fontWeight: 'bold' }
+                  }
+                }}
+              />
             </ListItemButton>
           </ListItem>
         </List>
