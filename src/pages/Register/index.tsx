@@ -183,6 +183,14 @@ const Register = () => {
             </FormControl>
           </Grid>
 
+          {/* Tratamento e Diagnóstico */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField id="tratamento" label="Tratamento" variant="outlined" fullWidth placeholder="Tratamento" multiline rows={2} />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField id="diagnostico" label="Diagnóstico" variant="outlined" fullWidth placeholder="Diagnóstico" multiline rows={2} />
+          </Grid>
+
           {/* Faz uso de sonda? */}
           <Grid size={{ xs: 12 }}>
             <FormControl component="fieldset">
@@ -197,10 +205,10 @@ const Register = () => {
           </Grid>
 
           {/* Se for outra: (condicional) */}
-          <Grid size={{ xs: 12 }}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             {/* Vai de um estado para controlar a visibilidade deste campo,
                 ex: if (usoSonda === 'outra') { ... } */}
-            <TextField id="se-for-outra" label="Se for outra:" variant="outlined" fullWidth placeholder="Outra" />
+            <TextField id="se-for-outra" label="Se for outra:" variant="outlined" fullWidth placeholder="Descreva" />
           </Grid>
 
           {/* Faz uso de curativo? */}
