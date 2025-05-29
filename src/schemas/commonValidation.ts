@@ -21,7 +21,7 @@ export const dateSchema = z.string()
 
 export const rgSchema = z.string()
   .min(1, "RG é obrigatório.")
-  .regex(RG_REGEX, "Formato de RG inválido (XX.XXX.XXX-X)."); // Ajuste o formato da mensagem se necessário
+  .regex(RG_REGEX, "Formato de RG inválido (XX.XXX.XXX-XX)."); // Ajuste o formato da mensagem se necessário
 
 export const phoneSchema = z.string()
   .min(1, "Telefone é obrigatório.")

@@ -18,30 +18,28 @@ export const patientSchema = z.object({
   naturalidade: requiredString,
   rg: rgSchema,
   nomeMae: requiredString,
-  profissao: z.string().optional(),
+  profissao: requiredString,
   telefone: phoneSchema,
   cep: cepSchema,
   endereco: requiredString,
   bairro: requiredString,
   numero: requiredString,
   complemento: z.string().optional(),
-  acompanhante: z.string().optional(),
+  acompanhante: requiredString,
+  cpfAcompanhante: cpfSchema,
+  telefoneAcompanhante: phoneSchema,
 
-  // Para campos opcionais que podem vir vazios mas precisam de validação se preenchidos
-  // Usamos z.union com o schema opcional e o literal vazio para tipagem correta
-  // e transform para garantir undefined se for vazio.
-  // Note: z.union com z.literal("") e .transform() é uma forma robusta.
-  // Você pode precisar adicionar .catch(undefined) se quiser que Zod trate erros de validação interna como undefined.
-  cpfAcompanhante: z.union([cpfSchema.optional(), z.literal("")]).transform(e => e === "" ? undefined : e) as z.ZodType<string | undefined>,
-  telefoneAcompanhante: z.union([phoneSchema.optional(), z.literal("")]).transform(e => e === "" ? undefined : e) as z.ZodType<string | undefined>,
+  /* 
+  campos opcionais que podem vir vazios mas precisam de validação se preenchidos usamos z.union com o schema opcional, o literal vazio e transform para garantir undefined se for vazio.
+  adicionar .catch(undefined) se quiser que Zod trate erros de validação interna como undefined. 
+  */
   cepAcompanhante: z.union([cepSchema.optional(), z.literal("")]).transform(e => e === "" ? undefined : e) as z.ZodType<string | undefined>,
-
   enderecoAcompanhante: z.string().optional(),
   bairroAcompanhante: z.string().optional(),
   numeroAcompanhante: z.string().optional(),
   complementoAcompanhante: z.string().optional(),
   tratamento: z.string().optional(),
-  diagnostico: z.string().optional(),
+  diagnostico: requiredString,
   vinculoPaciente: requiredString,
   podeAjudarCozinha: z.enum(["sim", "nao"], {
     errorMap: () => ({ message: "Selecione se pode ajudar na cozinha." }),
@@ -52,18 +50,18 @@ export const patientSchema = z.object({
   condicaoChegada: z.enum(["de_ambulancia", "maca", "cadeira_rodas", "nenhum"], {
     errorMap: () => ({ message: "Selecione a condição de chegada." }),
   }),
-  usoSonda: z.enum(["nao", "sonda_foley", "cislostomia", "outra"], {
-    errorMap: () => ({ message: "Selecione sobre o uso de sonda." }),
-  }),
   usoCurativo: z.enum(["sim", "nao"], {
     errorMap: () => ({ message: "Selecione sobre o uso de curativo." }),
   }),
   usoOxigenoterapia: z.enum(["sim", "nao"], {
     errorMap: () => ({ message: "Selecione sobre o uso de oxigenoterapia." }),
   }),
-  // 'seForOutra' é opcional e a validação condicional está no superRefine
+  usoSonda: z.enum(["nao", "sonda_foley", "cislostomia", "outra"], {
+    errorMap: () => ({ message: "Selecione sobre o uso de sonda." }),
+  }),
   seForOutra: z.string().optional().transform(e => e === "" ? undefined : e),
 }).superRefine((data, ctx) => {
+
   // Lógica de validação condicional para 'seForOutra'
   if (data.usoSonda === 'outra' && (!data.seForOutra || data.seForOutra.trim() === '')) {
     ctx.addIssue({
@@ -72,6 +70,7 @@ export const patientSchema = z.object({
       path: ['seForOutra'],
     });
   }
+
 });
 
 // --- Exporta o tipo TypeScript inferido a partir do schema ---
