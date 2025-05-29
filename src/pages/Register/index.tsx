@@ -7,8 +7,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { patientSchema, type PatientFormInputs } from '../../schemas/patientSchema';
 import { useForm, Controller } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { calculateAge } from "../../utils/dateCalculations";
+import { fetchAddressByCep } from "../../utils/cepService";
 
 const headerContainer = css({
   display: "flex",
@@ -61,11 +62,12 @@ const Register = () => {
     control,
     watch,
     setValue,
+    setError, // Exibir erros de API
+    clearErrors, // Limpar erros
   } = useForm({
     resolver: zodResolver(patientSchema),
     mode: "onBlur",
     defaultValues: {
-      // Campos de texto vazios por padrão
       nomeCompletoPaciente: "",
       cpfPaciente: "",
       dataNascimento: "",
@@ -92,7 +94,6 @@ const Register = () => {
       diagnostico: "",
       vinculoPaciente: "",
       seForOutra: "",
-
       // Campos de radio com defaultValues específicos
       podeAjudarCozinha: "nao",
       acompanhanteResponsavel: "sim",
@@ -103,7 +104,6 @@ const Register = () => {
     }
   });
 
-  // Success 
   const onSubmit = (data: PatientFormInputs) => {
     console.log("Formulário Válido, Dados:", data);
     alert("Formulário submetido com sucesso! Veja o console para os dados.");
@@ -117,6 +117,8 @@ const Register = () => {
   // Watch: propriedades que serão monitoradas
   const dataNascimentoValue = watch("dataNascimento");
   const usoSondaValue = watch("usoSonda");
+  const cepValue = watch("cep");
+  const cepAcompanhanteValue = watch("cepAcompanhante");
 
   // Efeito para calcular e preencher a idade automaticamente
   useEffect(() => {
@@ -128,15 +130,57 @@ const Register = () => {
     }
   }, [dataNascimentoValue, setValue]);
 
+  // Função para buscar e preencher o endereço
+  const handleCepSearch = useCallback(async (cep: string, targetFieldPrefix: "" | "acompanhante") => {
+    // Limpa erros anteriores do CEP
+    clearErrors(`${targetFieldPrefix}cep` as keyof PatientFormInputs);
+
+    // Limpa os campos de endereço enquanto a busca ocorre ou se o CEP for inválido
+    setValue(`${targetFieldPrefix}endereco` as keyof PatientFormInputs, "");
+    setValue(`${targetFieldPrefix}bairro` as keyof PatientFormInputs, "");
+    // Adicionar os outros
+
+    if (cep.replace(/\D/g, '').length === 8) { // Só busca se o CEP tiver 8 dígitos
+      try {
+        const addressData = await fetchAddressByCep(cep);
+        if (addressData) {
+          setValue(`${targetFieldPrefix}endereco` as keyof PatientFormInputs, addressData.logradouro);
+          setValue(`${targetFieldPrefix}bairro` as keyof PatientFormInputs, addressData.bairro);
+          setValue("naturalidade", addressData.localidade); // Exemplo: preenchendo naturalidade
+          // Adicionar outros
+
+          // Opcional: mover o foco para o campo 'numero'
+          // document.getElementById(`${targetFieldPrefix}numero`)?.focus();
+        } else {
+          // Define um erro se o CEP não for encontrado pela API
+          setError(`${targetFieldPrefix}cep` as keyof PatientFormInputs, {
+            type: "manual",
+            message: "CEP não encontrado ou inválido."
+          });
+        }
+      } catch (err) {
+        console.error("Erro ao buscar CEP:", err);
+        setError(`${targetFieldPrefix}cep` as keyof PatientFormInputs, {
+          type: "manual",
+          message: "Erro ao buscar CEP. Tente novamente."
+        });
+      }
+    }
+  }, [setValue, setError, clearErrors]);
+
+  // Efeito para monitorar o CEP do paciente
+  useEffect(() => {
+    // A busca será acionada quando o campo perder o foco (onBlur)
+    // ou você pode acionar ao digitar, mas onBlur é geralmente melhor para APIs
+  }, [cepValue, cepAcompanhanteValue, handleCepSearch]);
+
   return (
     <>
       <div css={headerContainer}>
-        <h1 css={TitleStyles}>Cadastrar Paciente</h1> {/* Título ajustado conforme a imagem */}
+        <h1 css={TitleStyles}>Cadastrar Paciente</h1>
 
         <form onSubmit={handleSubmit(onSubmit, onError)}>
-          <Grid container spacing={{ xs: 2, md: 3 }} sx={{ padding: '0 26px', maxWidth: '1200px' }}> {/* maxWidth para o formulário não ficar excessivamente largo em monitores grandes */}
-
-            {/* Certificar de que cada `name` nos `register` ou `Controller` corresponde a uma propriedade no `patientSchema` */}
+          <Grid container spacing={{ xs: 2, md: 3 }} sx={{ padding: '0 26px', maxWidth: '1200px' }}>
 
             {/* PRIMEIRA LINHA: Nome Completo e CPF */}
             <Grid size={{ xs: 12, md: 8 }}>
@@ -263,7 +307,9 @@ const Register = () => {
                 variant="outlined"
                 fullWidth
                 placeholder="00.000-000"
-                {...register("cep")}
+                {...register("cep", {
+                  onBlur: (e) => handleCepSearch(e.target.value, ""), // <-- Dispara a busca ao perder o foco
+                })}
                 error={!!errors.cep}
                 helperText={errors.cep?.message}
               />
@@ -278,6 +324,7 @@ const Register = () => {
                 {...register("endereco")}
                 error={!!errors.endereco}
                 helperText={errors.endereco?.message}
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
 
@@ -292,6 +339,7 @@ const Register = () => {
                 {...register("bairro")}
                 error={!!errors.bairro}
                 helperText={errors.bairro?.message}
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -316,6 +364,7 @@ const Register = () => {
                 {...register("complemento")}
                 error={!!errors.complemento}
                 helperText={errors.complemento?.message}
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
 
@@ -365,7 +414,9 @@ const Register = () => {
                 variant="outlined"
                 fullWidth
                 placeholder="00.000-000"
-                {...register("cepAcompanhante")}
+                {...register("cepAcompanhante", {
+                  onBlur: (e) => handleCepSearch(e.target.value, "acompanhante"), // <-- Para o CEP do acompanhante
+                })}
                 error={!!errors.cepAcompanhante}
                 helperText={errors.cepAcompanhante?.message}
               />
@@ -380,6 +431,7 @@ const Register = () => {
                 {...register("enderecoAcompanhante")}
                 error={!!errors.enderecoAcompanhante}
                 helperText={errors.enderecoAcompanhante?.message}
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
 
@@ -394,7 +446,7 @@ const Register = () => {
                 {...register("bairroAcompanhante")}
                 error={!!errors.bairroAcompanhante}
                 helperText={errors.bairroAcompanhante?.message}
-
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -419,6 +471,7 @@ const Register = () => {
                 {...register("complementoAcompanhante")}
                 error={!!errors.complementoAcompanhante}
                 helperText={errors.complementoAcompanhante?.message}
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
 
