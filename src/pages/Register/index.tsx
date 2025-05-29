@@ -7,6 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { patientSchema, type PatientFormInputs } from '../../schemas/patientSchema';
 import { useForm, Controller } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
+import { useEffect } from "react";
+import { calculateAge } from "../../utils/dateCalculations";
 
 const headerContainer = css({
   display: "flex",
@@ -57,7 +59,8 @@ const Register = () => {
     handleSubmit,
     formState: { errors },
     control,
-    watch
+    watch,
+    setValue,
   } = useForm({
     resolver: zodResolver(patientSchema),
     mode: "onBlur",
@@ -111,7 +114,19 @@ const Register = () => {
     alert("Por favor, corrija os erros no formulário.");
   };
 
+  // Watch: propriedades que serão monitoradas
+  const dataNascimentoValue = watch("dataNascimento");
   const usoSondaValue = watch("usoSonda");
+
+  // Efeito para calcular e preencher a idade automaticamente
+  useEffect(() => {
+    const age = calculateAge(dataNascimentoValue);
+    if (age !== null) {
+      setValue("idade", String(age), { shouldValidate: true });
+    } else {
+      setValue("idade", "", { shouldValidate: true });
+    }
+  }, [dataNascimentoValue, setValue]);
 
   return (
     <>
@@ -168,10 +183,13 @@ const Register = () => {
                 label="Idade"
                 variant="outlined"
                 fullWidth
-                placeholder="00"
                 {...register("idade")}
                 error={!!errors.idade}
                 helperText={errors.idade?.message}
+                disabled
+                InputLabelProps={{
+                  shrink: true, // Isso força a label a ir para cima
+                }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -527,7 +545,7 @@ const Register = () => {
                 <Controller
                   name="usoSonda"
                   control={control}
-                  defaultValue="nao" // `defaultValue` deve ser um dos valores do enum
+                  defaultValue="nao"
                   render={({ field }) => (
                     <RadioGroup row {...field}>
                       <FormControlLabel value="nao" control={<Radio />} label="Não" />
