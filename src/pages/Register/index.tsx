@@ -1,4 +1,3 @@
-import { css } from "@emotion/react";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import Grid from '@mui/material/Grid';
@@ -11,49 +10,8 @@ import { fetchAddressByCep } from "../../utils/cepService";
 import PatientPersonalDataForm from "../../components/PatientForm/PatientPersonalDataForm";
 import PatientDetailsForm from "../../components/PatientForm/PatientDetailsForm";
 import AcompanhanteForm from "../../components/PatientForm/AcompanhanteForm";
+import { buttonStyles, cancelButtonStyles, headerContainer, saveButtonStyles, TitleStyles } from "./styles";
 
-const headerContainer = css({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  flexDirection: "column",
-  gap: "16px",
-  width: "100%",
-  minHeight: "56px",
-  marginTop: "24px",
-  marginBottom: "24px",
-});
-
-const TitleStyles = css({
-  fontSize: "24px",
-  color: "#000",
-  fontWeight: "600",
-  textAlign: "center",
-  margin: 0,
-});
-
-// Estilos para os botões de Salvar/Cancelar
-const buttonStyles = css({
-  '&:not(:last-child)': {
-    marginRight: '16px', // Espaço entre os botões
-  },
-});
-
-const saveButtonStyles = css({
-  backgroundColor: '#000', // Cor preta para o botão Salvar
-  color: '#fff',
-  '&:hover': {
-    backgroundColor: '#333',
-  },
-});
-
-const cancelButtonStyles = css({
-  backgroundColor: '#f44336', // Cor vermelha para o botão Cancelar
-  color: '#fff',
-  '&:hover': {
-    backgroundColor: '#d32f2f',
-  },
-});
 
 const RegisterPage = () => {
   const {
