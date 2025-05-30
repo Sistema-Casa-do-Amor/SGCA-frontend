@@ -2,6 +2,7 @@ import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Text
 import { type UseFormRegister, type FieldErrors, Controller } from "react-hook-form";
 import type { PatientFormInputs } from "../../schemas/patientSchema";
 import type { Control } from "react-hook-form";
+import MaskedTextField from "../common/MaskedTextField";
 
 interface AcompanhanteFormProps {
   register: UseFormRegister<PatientFormInputs>;
@@ -32,46 +33,78 @@ const AcompanhanteForm = (
           {...register("acompanhante")}
           error={!!errors.acompanhante}
           helperText={errors.acompanhante?.message}
+          FormHelperTextProps={{
+            sx: {
+              maxHeight: '0.4em',
+              margin: '0 0.2em', // Zera a margem inferior padrão
+            },
+          }}
         />
       </Grid >
       <Grid size={{ xs: 12, md: 4 }}>
-        <TextField
-          id="cpf-acompanhante"
-          label="CPF do acompanhante"
-          variant="outlined"
-          fullWidth
-          placeholder="000.000.000-00"
-          {...register("cpfAcompanhante")}
-          error={!!errors.cpfAcompanhante}
-          helperText={errors.cpfAcompanhante?.message}
+        <Controller
+          name="cpfAcompanhante"
+          control={control}
+          render={({ field }) => (
+            <MaskedTextField
+              {...field}
+              id="cpf-acompanhante"
+              label="CPF"
+              variant="outlined"
+              fullWidth
+              placeholder="000.000.000-00"
+              error={!!errors.cpfAcompanhante}
+              helperText={errors.cpfAcompanhante?.message}
+              mask="000.000.000-00"
+              lazy={true}
+            />
+          )}
         />
       </Grid>
 
       {/* SÉTIMA LINHA: Telefone do acompanhante, CEP do acompanhante, Endereço do acompanhante */}
       <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-        <TextField
-          id="telefone-acompanhante"
-          label="Telefone do acompanhante"
-          variant="outlined"
-          fullWidth
-          placeholder="00 00000-0000"
-          {...register("telefoneAcompanhante")}
-          error={!!errors.telefoneAcompanhante}
-          helperText={errors.telefoneAcompanhante?.message}
+        <Controller
+          name="telefone"
+          control={control}
+          render={({ field }) => (
+            <MaskedTextField
+              {...field}
+              id="telefone-acompanhante"
+              label="Telefone"
+              variant="outlined"
+              fullWidth
+              placeholder="(00) 00000-0000"
+              error={!!errors.telefoneAcompanhante}
+              helperText={errors.telefoneAcompanhante?.message}
+              mask="(00) 00000-0000"
+              lazy={true}
+            />
+          )}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-        <TextField
-          id="cep-acompanhante"
-          label="CEP do acompanhante"
-          variant="outlined"
-          fullWidth
-          placeholder="00.000-000"
-          {...register("cepAcompanhante", {
-            onBlur: (e) => handleCepSearch(e.target.value, "acompanhante"), // <-- Para o CEP do acompanhante
-          })}
-          error={!!errors.cepAcompanhante}
-          helperText={errors.cepAcompanhante?.message}
+        <Controller
+          name="cep"
+          control={control}
+          render={({ field }) => (
+            <MaskedTextField
+              {...field}
+              id="cep-acompanhante"
+              label="CEP"
+              variant="outlined"
+              fullWidth
+              placeholder="00000-000"
+              error={!!errors.cepAcompanhante}
+              helperText={errors.cepAcompanhante?.message}
+              mask="00000-000"
+              lazy={true}
+              onBlur={(e) => {
+                field.onBlur();
+                handleCepSearch(e.target.value, "");
+              }}
+            />
+          )}
         />
       </Grid>
       <Grid size={{ xs: 12, md: 5 }}>
@@ -80,11 +113,17 @@ const AcompanhanteForm = (
           label="Endereço do acompanhante"
           variant="outlined"
           fullWidth
-          placeholder="Rua 5"
+          placeholder="Endereço do acompanhante"
           {...register("enderecoAcompanhante")}
           error={!!errors.enderecoAcompanhante}
           helperText={errors.enderecoAcompanhante?.message}
           InputLabelProps={{ shrink: true }}
+          FormHelperTextProps={{
+            sx: {
+              maxHeight: '0.4em',
+              margin: '0 0.2em', // Zera a margem inferior padrão
+            },
+          }}
         />
       </Grid>
 
@@ -95,11 +134,17 @@ const AcompanhanteForm = (
           label="Bairro"
           variant="outlined"
           fullWidth
-          placeholder="Primavera"
+          placeholder="Bairro"
           {...register("bairroAcompanhante")}
           error={!!errors.bairroAcompanhante}
           helperText={errors.bairroAcompanhante?.message}
           InputLabelProps={{ shrink: true }}
+          FormHelperTextProps={{
+            sx: {
+              maxHeight: '0.4em',
+              margin: '0 0.2em', // Zera a margem inferior padrão
+            },
+          }}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -112,6 +157,12 @@ const AcompanhanteForm = (
           {...register("numeroAcompanhante")}
           error={!!errors.numeroAcompanhante}
           helperText={errors.numeroAcompanhante?.message}
+          FormHelperTextProps={{
+            sx: {
+              maxHeight: '0.4em',
+              margin: '0 0.2em', // Zera a margem inferior padrão
+            },
+          }}
         />
       </Grid>
       <Grid size={{ xs: 12, md: 5 }}>
@@ -120,11 +171,17 @@ const AcompanhanteForm = (
           label="Complemento"
           variant="outlined"
           fullWidth
-          placeholder="Bloco 5, Ap 03"
+          placeholder="Complemento"
           {...register("complementoAcompanhante")}
           error={!!errors.complementoAcompanhante}
           helperText={errors.complementoAcompanhante?.message}
           InputLabelProps={{ shrink: true }}
+          FormHelperTextProps={{
+            sx: {
+              maxHeight: '0.4em',
+              margin: '0 0.2em', // Zera a margem inferior padrão
+            },
+          }}
         />
       </Grid>
 
@@ -139,6 +196,12 @@ const AcompanhanteForm = (
           {...register("vinculoPaciente")}
           error={!!errors.vinculoPaciente}
           helperText={errors.vinculoPaciente?.message}
+          FormHelperTextProps={{
+            sx: {
+              maxHeight: '0.4em',
+              margin: '0 0.2em', // Zera a margem inferior padrão
+            },
+          }}
         />
       </Grid>
 

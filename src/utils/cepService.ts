@@ -1,15 +1,9 @@
 interface ViaCepResponse {
   cep: string;
-  logradouro: string; // Rua
+  logradouro: string;
   complemento: string;
   bairro: string;
-  localidade: string; // Cidade
-  uf: string; // Estado
-  ibge: string;
-  gia: string;
-  ddd: string;
-  siafi: string;
-  erro?: boolean; // Para CEPs não encontrados
+  erro?: boolean;
 }
 
 export const fetchAddressByCep = async (cep: string): Promise<ViaCepResponse | null> => {

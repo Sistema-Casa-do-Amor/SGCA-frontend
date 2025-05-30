@@ -31,8 +31,5 @@ export const cepSchema = z.string()
   .min(1, "CEP é obrigatório.")
   .regex(CEP_REGEX, "Formato de CEP inválido (XXXXX-XXX).");
 
-// --- Exemplo de um schema para números (idade) ---
-export const numberStringSchema = z.string()
-  .min(1, "Campo numérico obrigatório.")
-  .regex(/^\d+$/, "Deve ser um número.");
+
 

@@ -82,21 +82,16 @@ const RegisterPage = () => {
     // Limpa os campos de endereço enquanto a busca ocorre ou se o CEP for inválido
     setValue(`${targetFieldPrefix}endereco` as keyof PatientFormInputs, "");
     setValue(`${targetFieldPrefix}bairro` as keyof PatientFormInputs, "");
-    // Adicionar os outros
+    setValue(`${targetFieldPrefix}complemento` as keyof PatientFormInputs, "");
 
-    if (cep.replace(/\D/g, '').length === 8) { // Só busca se o CEP tiver 8 dígitos
+    if (cep.replace(/\D/g, '').length === 8) {
       try {
         const addressData = await fetchAddressByCep(cep);
         if (addressData) {
           setValue(`${targetFieldPrefix}endereco` as keyof PatientFormInputs, addressData.logradouro);
           setValue(`${targetFieldPrefix}bairro` as keyof PatientFormInputs, addressData.bairro);
-          setValue("naturalidade", addressData.localidade); // Exemplo: preenchendo naturalidade
-          // Adicionar outros
-
-          // Opcional: mover o foco para o campo 'numero'
-          // document.getElementById(`${targetFieldPrefix}numero`)?.focus();
+          setValue(`${targetFieldPrefix}complemento` as keyof PatientFormInputs, addressData.complemento);
         } else {
-          // Define um erro se o CEP não for encontrado pela API
           setError(`${targetFieldPrefix}cep` as keyof PatientFormInputs, {
             type: "manual",
             message: "CEP não encontrado ou inválido."
@@ -115,7 +110,6 @@ const RegisterPage = () => {
   // Efeito para monitorar o CEP do paciente
   useEffect(() => {
     // A busca será acionada quando o campo perder o foco (onBlur)
-    // ou você pode acionar ao digitar, mas onBlur é geralmente melhor para APIs
   }, [cepValue, cepAcompanhanteValue, handleCepSearch]);
 
   return (
@@ -130,6 +124,7 @@ const RegisterPage = () => {
           watch={watch}
           setValue={setValue}
           handleCepSearch={handleCepSearch}
+          control={control}
         />
 
         {/* Dados Acompanhante */}

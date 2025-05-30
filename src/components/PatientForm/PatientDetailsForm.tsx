@@ -6,8 +6,8 @@ import { type UseFormRegister, type FieldErrors, Controller, type Control, type 
 interface PatientHealthDetailsFormProps {
   register: UseFormRegister<PatientFormInputs>;
   errors: FieldErrors<PatientFormInputs>;
-  control: Control<PatientFormInputs>; // Necessário para Controller
-  watch: UseFormWatch<PatientFormInputs>; // Necessário para observar usoSonda
+  control: Control<PatientFormInputs>;
+  watch: UseFormWatch<PatientFormInputs>;
 }
 
 const PatientDetailsForm = (
@@ -74,6 +74,12 @@ const PatientDetailsForm = (
           {...register("diagnostico")}
           error={!!errors.diagnostico}
           helperText={errors.diagnostico?.message}
+          FormHelperTextProps={{
+            sx: {
+              maxHeight: '0em',
+              margin: '0 0.2em', // Zera a margem inferior padrão
+            },
+          }}
         />
       </Grid>
 
@@ -113,6 +119,12 @@ const PatientDetailsForm = (
           error={!!errors.seForOutra}
           helperText={errors.seForOutra?.message}
           disabled={usoSondaValue !== 'outra'} // Desabilita o campo se não for "outra"
+          FormHelperTextProps={{
+            sx: {
+              maxHeight: '0em',
+              margin: '0 0.2em', // Zera a margem inferior padrão
+            },
+          }}
         />
       </Grid>
 

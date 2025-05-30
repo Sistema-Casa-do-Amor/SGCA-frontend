@@ -6,7 +6,6 @@ import {
   phoneSchema,
   cepSchema,
   requiredString,
-  numberStringSchema,
 } from './commonValidation';
 
 export const patientSchema = z.object({
@@ -14,7 +13,7 @@ export const patientSchema = z.object({
   nomeCompletoPaciente: requiredString.max(255, "Nome muito longo."),
   cpfPaciente: cpfSchema,
   dataNascimento: dateSchema,
-  idade: numberStringSchema.max(3, "Idade inválida (máx 3 dígitos)"),
+  idade: z.string(),
   naturalidade: requiredString,
   rg: rgSchema,
   nomeMae: requiredString,

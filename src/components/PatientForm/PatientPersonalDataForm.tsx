@@ -1,8 +1,9 @@
 import { Grid, TextField } from "@mui/material";
-import { type UseFormRegister, type FieldErrors, type UseFormWatch, type UseFormSetValue } from "react-hook-form";
+import { type UseFormRegister, type FieldErrors, type UseFormWatch, type UseFormSetValue, Controller, type Control } from "react-hook-form";
 import type { PatientFormInputs } from "../../schemas/patientSchema";
 import { useEffect } from "react";
 import { calculateAge } from "../../utils/dateCalculations";
+import MaskedTextField from "../common/MaskedTextField";
 
 // Definição da interface de props para este componente
 interface PatientPersonalDataFormProps {
@@ -10,6 +11,7 @@ interface PatientPersonalDataFormProps {
   errors: FieldErrors<PatientFormInputs>;
   watch: UseFormWatch<PatientFormInputs>; // Necessário para assistir `dataNascimento`
   setValue: UseFormSetValue<PatientFormInputs>; // Necessário para setar `idade`
+  control: Control<PatientFormInputs>;
   handleCepSearch: (cep: string, targetFieldPrefix: "" | "acompanhante") => Promise<void>;
 }
 
@@ -20,6 +22,7 @@ const PatientPersonalDataForm = (
     watch,
     setValue,
     handleCepSearch,
+    control,
   }: PatientPersonalDataFormProps
 ) => {
 
@@ -51,32 +54,56 @@ const PatientPersonalDataForm = (
             {...register("nomeCompletoPaciente")}
             error={!!errors.nomeCompletoPaciente}
             helperText={errors.nomeCompletoPaciente?.message}
+            FormHelperTextProps={{
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em', // Zera a margem inferior padrão
+              },
+            }}
           />
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}> {/* CPF: 12 colunas em xs, 4 em md+ */}
-          <TextField
-            id="cpf-paciente"
-            label="CPF"
-            variant="outlined"
-            fullWidth
-            placeholder="000.000.000-00"
-            {...register("cpfPaciente")}
-            error={!!errors.cpfPaciente}
-            helperText={errors.cpfPaciente?.message}
+
+        {/* CPF */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Controller
+            name="cpfPaciente"
+            control={control}
+            render={({ field }) => (
+              <MaskedTextField
+                {...field}
+                id="cpf-paciente"
+                label="CPF"
+                variant="outlined"
+                fullWidth
+                placeholder="000.000.000-00"
+                error={!!errors.cpfPaciente}
+                helperText={errors.cpfPaciente?.message}
+                mask="000.000.000-00"
+                lazy={true}
+              />
+            )}
           />
         </Grid>
 
         {/* SEGUNDA LINHA: Data de Nascimento, Idade, Naturalidade, RG */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <TextField
-            id="data-nascimento"
-            label="Data de Nascimento"
-            variant="outlined"
-            fullWidth
-            placeholder="00/00/0000"
-            {...register("dataNascimento")}
-            error={!!errors.dataNascimento}
-            helperText={errors.dataNascimento?.message}
+          <Controller
+            name="dataNascimento"
+            control={control}
+            render={({ field }) => (
+              <MaskedTextField
+                {...field}
+                id="data-nascimento"
+                label="Data de Nascimento"
+                variant="outlined"
+                fullWidth
+                placeholder="00/00/0000"
+                error={!!errors.dataNascimento}
+                helperText={errors.dataNascimento?.message}
+                mask="00/00/0000"
+                lazy={true}
+              />
+            )}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 2 }}>
@@ -88,9 +115,17 @@ const PatientPersonalDataForm = (
             {...register("idade")}
             error={!!errors.idade}
             helperText={errors.idade?.message}
+            placeholder="Idade"
+            aria-readonly
             disabled
             InputLabelProps={{
               shrink: true,
+            }}
+            FormHelperTextProps={{
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em', // Zera a margem inferior padrão
+              },
             }}
           />
         </Grid>
@@ -104,18 +139,32 @@ const PatientPersonalDataForm = (
             {...register("naturalidade")}
             error={!!errors.naturalidade}
             helperText={errors.naturalidade?.message}
+            FormHelperTextProps={{
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em', // Zera a margem inferior padrão
+              },
+            }}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <TextField
-            id="rg"
-            label="RG"
-            variant="outlined"
-            fullWidth
-            placeholder="00.000.000-00"
-            {...register("rg")}
-            error={!!errors.rg}
-            helperText={errors.rg?.message}
+          <Controller
+            name="rg"
+            control={control}
+            render={({ field }) => (
+              <MaskedTextField
+                {...field}
+                id="rg"
+                label="RG"
+                variant="outlined"
+                fullWidth
+                placeholder="00.000.000-00"
+                error={!!errors.rg}
+                helperText={errors.rg?.message}
+                mask="00.000.000-00"
+                lazy={true}
+              />
+            )}
           />
         </Grid>
 
@@ -130,8 +179,16 @@ const PatientPersonalDataForm = (
             {...register("nomeMae")}
             error={!!errors.nomeMae}
             helperText={errors.nomeMae?.message}
+            FormHelperTextProps={{
+              sx: {
+                maxHeight: '0em',
+                margin: '0 0.2em', // Zera a margem inferior padrão
+                padding: '0'
+              },
+            }}
           />
         </Grid>
+
         <Grid size={{ xs: 12, md: 4 }}>
           <TextField
             id="profissao"
@@ -142,34 +199,58 @@ const PatientPersonalDataForm = (
             {...register("profissao")}
             error={!!errors.profissao}
             helperText={errors.profissao?.message}
+            FormHelperTextProps={{
+              sx: {
+                maxHeight: '0em',
+                margin: '0 0.2em', // Zera a margem inferior padrão
+              },
+            }}
           />
         </Grid>
 
         {/* QUARTA LINHA: Telefone, CEP, Endereço */}
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <TextField
-            id="telefone"
-            label="Telefone"
-            variant="outlined"
-            fullWidth
-            placeholder="00 00000-0000"
-            {...register("telefone")}
-            error={!!errors.telefone}
-            helperText={errors.telefone?.message}
+          <Controller
+            name="telefone"
+            control={control}
+            render={({ field }) => (
+              <MaskedTextField
+                {...field}
+                id="telefone"
+                label="Telefone"
+                variant="outlined"
+                fullWidth
+                placeholder="(00) 00000-0000"
+                error={!!errors.telefone}
+                helperText={errors.telefone?.message}
+                mask="(00) 00000-0000"
+                lazy={true}
+              />
+            )}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <TextField
-            id="cep"
-            label="CEP"
-            variant="outlined"
-            fullWidth
-            placeholder="00.000-000"
-            {...register("cep", {
-              onBlur: (e) => handleCepSearch(e.target.value, ""), // <-- Dispara a busca ao perder o foco
-            })}
-            error={!!errors.cep}
-            helperText={errors.cep?.message}
+          <Controller
+            name="cep"
+            control={control}
+            render={({ field }) => (
+              <MaskedTextField
+                {...field}
+                id="cep"
+                label="CEP"
+                variant="outlined"
+                fullWidth
+                placeholder="00000-000"
+                error={!!errors.cep}
+                helperText={errors.cep?.message}
+                mask="00000-000"
+                lazy={true}
+                onBlur={(e) => {
+                  field.onBlur();
+                  handleCepSearch(e.target.value, "");
+                }}
+              />
+            )}
           />
         </Grid>
         <Grid size={{ xs: 12, md: 5 }}>
@@ -178,11 +259,17 @@ const PatientPersonalDataForm = (
             label="Endereço"
             variant="outlined"
             fullWidth
-            placeholder="Rua 5"
+            placeholder="Digite o endereço"
             {...register("endereco")}
             error={!!errors.endereco}
             helperText={errors.endereco?.message}
             InputLabelProps={{ shrink: true }}
+            FormHelperTextProps={{
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em', // Zera a margem inferior padrão
+              },
+            }}
           />
         </Grid>
 
@@ -193,11 +280,17 @@ const PatientPersonalDataForm = (
             label="Bairro"
             variant="outlined"
             fullWidth
-            placeholder="Primavera"
+            placeholder="Bairro"
             {...register("bairro")}
             error={!!errors.bairro}
             helperText={errors.bairro?.message}
             InputLabelProps={{ shrink: true }}
+            FormHelperTextProps={{
+              sx: {
+                maxHeight: '0em',
+                margin: '0 0.2em', // Zera a margem inferior padrão
+              },
+            }}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -210,6 +303,12 @@ const PatientPersonalDataForm = (
             {...register("numero")}
             error={!!errors.numero}
             helperText={errors.numero?.message}
+            FormHelperTextProps={{
+              sx: {
+                maxHeight: '0em',
+                margin: '0 0.2em', // Zera a margem inferior padrão
+              },
+            }}
           />
         </Grid>
         <Grid size={{ xs: 12, md: 5 }}>
@@ -218,11 +317,17 @@ const PatientPersonalDataForm = (
             label="Complemento"
             variant="outlined"
             fullWidth
-            placeholder="Bloco 5, Ap 03"
+            placeholder="Complemento"
             {...register("complemento")}
             error={!!errors.complemento}
             helperText={errors.complemento?.message}
             InputLabelProps={{ shrink: true }}
+            FormHelperTextProps={{
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em', // Zera a margem inferior padrão
+              },
+            }}
           />
         </Grid>
       </Grid>
