@@ -2,7 +2,7 @@ import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Text
 import { type UseFormRegister, type FieldErrors, Controller } from "react-hook-form";
 import type { PatientFormInputs } from "../../schemas/patientSchema";
 import type { Control } from "react-hook-form";
-import MaskedTextField from "../common/MaskedTextField";
+import MaskedTextField from "./MaskedTextField";
 
 interface AcompanhanteFormProps {
   register: UseFormRegister<PatientFormInputs>;
@@ -65,7 +65,7 @@ const AcompanhanteForm = (
       {/* SÉTIMA LINHA: Telefone do acompanhante, CEP do acompanhante, Endereço do acompanhante */}
       <Grid size={{ xs: 12, sm: 6, md: 4 }}>
         <Controller
-          name="telefone"
+          name="telefoneAcompanhante"
           control={control}
           render={({ field }) => (
             <MaskedTextField
@@ -74,10 +74,10 @@ const AcompanhanteForm = (
               label="Telefone"
               variant="outlined"
               fullWidth
-              placeholder="(00) 00000-0000"
+              placeholder="00 00000-0000"
               error={!!errors.telefoneAcompanhante}
               helperText={errors.telefoneAcompanhante?.message}
-              mask="(00) 00000-0000"
+              mask="00 00000-0000"
               lazy={true}
             />
           )}
@@ -85,7 +85,7 @@ const AcompanhanteForm = (
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <Controller
-          name="cep"
+          name="cepAcompanhante"
           control={control}
           render={({ field }) => (
             <MaskedTextField

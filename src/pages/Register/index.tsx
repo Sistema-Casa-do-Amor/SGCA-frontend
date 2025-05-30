@@ -1,19 +1,41 @@
-import { Button } from "@mui/material";
+import { Button, type AlertColor } from "@mui/material";
 import { Link } from "react-router-dom";
 import Grid from '@mui/material/Grid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { patientSchema, type PatientFormInputs } from '../../schemas/patientSchema';
 import { useForm } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { fetchAddressByCep } from "../../utils/cepService";
 import PatientPersonalDataForm from "../../components/PatientForm/PatientPersonalDataForm";
 import PatientDetailsForm from "../../components/PatientForm/PatientDetailsForm";
 import AcompanhanteForm from "../../components/PatientForm/AcompanhanteForm";
 import { buttonStyles, cancelButtonStyles, headerContainer, saveButtonStyles, TitleStyles } from "./styles";
-
+import Snackbar from '@mui/material/Snackbar';
+import type { SnackbarCloseReason } from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const RegisterPage = () => {
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("success");
+
+  const showSnackbar = (message: string, severity: AlertColor) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (
+    event: React.SyntheticEvent | Event,
+    reason: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   const {
     register,
     handleSubmit,
@@ -64,12 +86,20 @@ const RegisterPage = () => {
 
   const onSubmit = (data: PatientFormInputs) => {
     console.log("Formulário Válido, Dados:", data);
-    alert("Formulário submetido com sucesso! Veja o console para os dados.");
+    try {
+      // Fazer a chamada API (ex: axios.post('/api/patients', data)) aqui, usar hooks
+      // await someApiService.createPatient(data); // Exemplo de chamada API
+      showSnackbar("Paciente cadastrado com sucesso!", "success");
+      // navigate('/patients');
+    } catch (error) {
+      console.error("Erro ao cadastrar paciente:", error);
+      showSnackbar("Erro ao cadastrar paciente. Tente novamente.", "error");
+    }
   };
 
   const onError = (errors: FieldErrors<PatientFormInputs>) => {
     console.log("Erros de validação:", errors);
-    alert("Por favor, corrija os erros no formulário.");
+    showSnackbar("Por favor, corrija os erros no formulário.", "error");
   };
 
   const cepValue = watch("cep");
@@ -96,6 +126,7 @@ const RegisterPage = () => {
             type: "manual",
             message: "CEP não encontrado ou inválido."
           });
+          showSnackbar("CEP não encontrado ou inválido.", "warning");
         }
       } catch (err) {
         console.error("Erro ao buscar CEP:", err);
@@ -103,9 +134,10 @@ const RegisterPage = () => {
           type: "manual",
           message: "Erro ao buscar CEP. Tente novamente."
         });
+        showSnackbar("Erro ao buscar CEP. Tente novamente.", "error");
       }
     }
-  }, [setValue, setError, clearErrors]);
+  }, [setValue, setError, clearErrors, showSnackbar]);
 
   // Efeito para monitorar o CEP do paciente
   useEffect(() => {
@@ -162,6 +194,23 @@ const RegisterPage = () => {
           </Button>
         </Grid>
       </form>
+
+      {/* Snackbar Component */}
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={(event) => handleSnackbarClose(event, 'clickaway')}
+          severity={snackbarSeverity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

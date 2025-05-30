@@ -3,7 +3,7 @@ import { type UseFormRegister, type FieldErrors, type UseFormWatch, type UseForm
 import type { PatientFormInputs } from "../../schemas/patientSchema";
 import { useEffect } from "react";
 import { calculateAge } from "../../utils/dateCalculations";
-import MaskedTextField from "../common/MaskedTextField";
+import MaskedTextField from "./MaskedTextField";
 
 // Definição da interface de props para este componente
 interface PatientPersonalDataFormProps {
@@ -220,10 +220,10 @@ const PatientPersonalDataForm = (
                 label="Telefone"
                 variant="outlined"
                 fullWidth
-                placeholder="(00) 00000-0000"
+                placeholder="00 00000-0000"
                 error={!!errors.telefone}
                 helperText={errors.telefone?.message}
-                mask="(00) 00000-0000"
+                mask="00 00000-0000"
                 lazy={true}
               />
             )}
