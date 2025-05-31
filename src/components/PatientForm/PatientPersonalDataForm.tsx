@@ -5,12 +5,11 @@ import { useEffect } from "react";
 import { calculateAge } from "../../utils/dateCalculations";
 import MaskedTextField from "./MaskedTextField";
 
-// Definição da interface de props para este componente
 interface PatientPersonalDataFormProps {
   register: UseFormRegister<PatientFormInputs>;
   errors: FieldErrors<PatientFormInputs>;
-  watch: UseFormWatch<PatientFormInputs>; // Necessário para assistir `dataNascimento`
-  setValue: UseFormSetValue<PatientFormInputs>; // Necessário para setar `idade`
+  watch: UseFormWatch<PatientFormInputs>;
+  setValue: UseFormSetValue<PatientFormInputs>;
   control: Control<PatientFormInputs>;
   handleCepSearch: (cep: string, targetFieldPrefix: "" | "acompanhante") => Promise<void>;
 }
@@ -27,6 +26,9 @@ const PatientPersonalDataForm = (
 ) => {
 
   const dataNascimentoValue = watch("dataNascimento");
+  const enderecoValue = watch("endereco");
+  const bairroValue = watch("bairro");
+  const complementoValue = watch("complemento");
 
   // Efeito para calcular e preencher a idade automaticamente
   useEffect(() => {
@@ -54,10 +56,12 @@ const PatientPersonalDataForm = (
             {...register("nomeCompletoPaciente")}
             error={!!errors.nomeCompletoPaciente}
             helperText={errors.nomeCompletoPaciente?.message}
-            FormHelperTextProps={{
-              sx: {
-                maxHeight: '0.4em',
-                margin: '0 0.2em', // Zera a margem inferior padrão
+            slotProps={{
+              formHelperText: {
+                sx: {
+                  maxHeight: '0.4em',
+                  margin: '0 0.2em',
+                },
               },
             }}
           />
@@ -118,13 +122,15 @@ const PatientPersonalDataForm = (
             placeholder="Idade"
             aria-readonly
             disabled
-            InputLabelProps={{
-              shrink: true,
-            }}
-            FormHelperTextProps={{
-              sx: {
-                maxHeight: '0.4em',
-                margin: '0 0.2em', // Zera a margem inferior padrão
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+              formHelperText: {
+                sx: {
+                  maxHeight: '0.4em',
+                  margin: '0 0.2em',
+                },
               },
             }}
           />
@@ -139,10 +145,12 @@ const PatientPersonalDataForm = (
             {...register("naturalidade")}
             error={!!errors.naturalidade}
             helperText={errors.naturalidade?.message}
-            FormHelperTextProps={{
-              sx: {
-                maxHeight: '0.4em',
-                margin: '0 0.2em', // Zera a margem inferior padrão
+            slotProps={{
+              formHelperText: {
+                sx: {
+                  maxHeight: '0.4em',
+                  margin: '0 0.2em',
+                },
               },
             }}
           />
@@ -179,11 +187,12 @@ const PatientPersonalDataForm = (
             {...register("nomeMae")}
             error={!!errors.nomeMae}
             helperText={errors.nomeMae?.message}
-            FormHelperTextProps={{
-              sx: {
-                maxHeight: '0em',
-                margin: '0 0.2em', // Zera a margem inferior padrão
-                padding: '0'
+            slotProps={{
+              formHelperText: {
+                sx: {
+                  maxHeight: '0.4em',
+                  margin: '0 0.2em',
+                },
               },
             }}
           />
@@ -199,10 +208,12 @@ const PatientPersonalDataForm = (
             {...register("profissao")}
             error={!!errors.profissao}
             helperText={errors.profissao?.message}
-            FormHelperTextProps={{
-              sx: {
-                maxHeight: '0em',
-                margin: '0 0.2em', // Zera a margem inferior padrão
+            slotProps={{
+              formHelperText: {
+                sx: {
+                  maxHeight: '0.4em',
+                  margin: '0 0.2em',
+                },
               },
             }}
           />
@@ -263,11 +274,15 @@ const PatientPersonalDataForm = (
             {...register("endereco")}
             error={!!errors.endereco}
             helperText={errors.endereco?.message}
-            InputLabelProps={{ shrink: true }}
-            FormHelperTextProps={{
-              sx: {
-                maxHeight: '0.4em',
-                margin: '0 0.2em', // Zera a margem inferior padrão
+            slotProps={{
+              inputLabel: {
+                shrink: !!enderecoValue,
+              },
+              formHelperText: {
+                sx: {
+                  maxHeight: '0.4em',
+                  margin: '0 0.2em',
+                },
               },
             }}
           />
@@ -284,11 +299,15 @@ const PatientPersonalDataForm = (
             {...register("bairro")}
             error={!!errors.bairro}
             helperText={errors.bairro?.message}
-            InputLabelProps={{ shrink: true }}
-            FormHelperTextProps={{
-              sx: {
-                maxHeight: '0em',
-                margin: '0 0.2em', // Zera a margem inferior padrão
+            slotProps={{
+              inputLabel: {
+                shrink: !!bairroValue,
+              },
+              formHelperText: {
+                sx: {
+                  maxHeight: '0.4em',
+                  margin: '0 0.2em',
+                },
               },
             }}
           />
@@ -303,10 +322,12 @@ const PatientPersonalDataForm = (
             {...register("numero")}
             error={!!errors.numero}
             helperText={errors.numero?.message}
-            FormHelperTextProps={{
-              sx: {
-                maxHeight: '0em',
-                margin: '0 0.2em', // Zera a margem inferior padrão
+            slotProps={{
+              formHelperText: {
+                sx: {
+                  maxHeight: '0.4em',
+                  margin: '0 0.2em',
+                },
               },
             }}
           />
@@ -321,11 +342,15 @@ const PatientPersonalDataForm = (
             {...register("complemento")}
             error={!!errors.complemento}
             helperText={errors.complemento?.message}
-            InputLabelProps={{ shrink: true }}
-            FormHelperTextProps={{
-              sx: {
-                maxHeight: '0.4em',
-                margin: '0 0.2em', // Zera a margem inferior padrão
+            slotProps={{
+              inputLabel: {
+                shrink: !!complementoValue,
+              },
+              formHelperText: {
+                sx: {
+                  maxHeight: '0.4em',
+                  margin: '0 0.2em',
+                },
               },
             }}
           />

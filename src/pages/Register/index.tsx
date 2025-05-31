@@ -20,14 +20,13 @@ const RegisterPage = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("success");
 
-  const showSnackbar = (message: string, severity: AlertColor) => {
+  const showSnackbar = useCallback((message: string, severity: AlertColor) => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
-  };
+  }, []);
 
   const handleSnackbarClose = (
-    event: React.SyntheticEvent | Event,
     reason: SnackbarCloseReason
   ) => {
     if (reason === "clickaway") {
@@ -163,6 +162,7 @@ const RegisterPage = () => {
         <AcompanhanteForm
           register={register}
           errors={errors}
+          watch={watch}
           handleCepSearch={handleCepSearch}
           control={control}
         />
@@ -176,7 +176,7 @@ const RegisterPage = () => {
         />
 
         {/* Botões Salvar e Cancelar */}
-        <Grid size={{ xs: 12 }} sx={{ display: 'flex', justifyContent: 'flex-start', mt: 4, mb: 4, ml: 3 }}>
+        <Grid size={{ xs: 12 }} sx={{ display: 'flex', justifyContent: 'flex-start', mt: 4, ml: 3 }}>
           <Button
             component={Link}
             to="/patients"
@@ -200,10 +200,10 @@ const RegisterPage = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         open={snackbarOpen}
         autoHideDuration={6000}
-        onClose={handleSnackbarClose}
+        onClose={(_, reason) => handleSnackbarClose(reason as SnackbarCloseReason)}
       >
         <Alert
-          onClose={(event) => handleSnackbarClose(event, 'clickaway')}
+          onClose={() => handleSnackbarClose('clickaway')}
           severity={snackbarSeverity}
           variant="filled"
           sx={{ width: '100%' }}

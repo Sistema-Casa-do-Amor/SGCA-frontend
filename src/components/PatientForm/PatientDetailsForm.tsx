@@ -74,10 +74,12 @@ const PatientDetailsForm = (
           {...register("diagnostico")}
           error={!!errors.diagnostico}
           helperText={errors.diagnostico?.message}
-          FormHelperTextProps={{
-            sx: {
-              maxHeight: '0em',
-              margin: '0 0.2em', // Zera a margem inferior padrão
+          slotProps={{
+            formHelperText: {
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em',
+              },
             },
           }}
         />
@@ -119,10 +121,12 @@ const PatientDetailsForm = (
           error={!!errors.seForOutra}
           helperText={errors.seForOutra?.message}
           disabled={usoSondaValue !== 'outra'} // Desabilita o campo se não for "outra"
-          FormHelperTextProps={{
-            sx: {
-              maxHeight: '0em',
-              margin: '0 0.2em', // Zera a margem inferior padrão
+          slotProps={{
+            formHelperText: {
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em',
+              },
             },
           }}
         />

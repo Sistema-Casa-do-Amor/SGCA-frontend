@@ -1,24 +1,31 @@
 import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, TextField } from "@mui/material";
 import { type UseFormRegister, type FieldErrors, Controller } from "react-hook-form";
 import type { PatientFormInputs } from "../../schemas/patientSchema";
-import type { Control } from "react-hook-form";
+import type { Control, UseFormWatch } from "react-hook-form";
 import MaskedTextField from "./MaskedTextField";
 
 interface AcompanhanteFormProps {
   register: UseFormRegister<PatientFormInputs>;
   errors: FieldErrors<PatientFormInputs>;
-  handleCepSearch: (cep: string, targetFieldPrefix: "" | "acompanhante") => Promise<void>;
+  watch: UseFormWatch<PatientFormInputs>;
   control: Control<PatientFormInputs>;
+  handleCepSearch: (cep: string, targetFieldPrefix: "" | "acompanhante") => Promise<void>;
 }
 
 const AcompanhanteForm = (
   {
     register,
     errors,
-    handleCepSearch,
+    watch,
     control,
+    handleCepSearch,
   }: AcompanhanteFormProps
 ) => {
+
+  const enderecoAcompanhanteValue = watch("enderecoAcompanhante");
+  const bairroAcompanhanteValue = watch("bairro");
+  const complementoAcompanhanteValue = watch("complemento");
+
   return (
     <Grid container spacing={{ xs: 2, md: 3 }} sx={{ padding: '26px', maxWidth: '1200px' }}>
       {/* SEXTA LINHA: Acompanhante e CPF do acompanhante */}
@@ -33,10 +40,12 @@ const AcompanhanteForm = (
           {...register("acompanhante")}
           error={!!errors.acompanhante}
           helperText={errors.acompanhante?.message}
-          FormHelperTextProps={{
-            sx: {
-              maxHeight: '0.4em',
-              margin: '0 0.2em', // Zera a margem inferior padrão
+          slotProps={{
+            formHelperText: {
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em',
+              },
             },
           }}
         />
@@ -117,11 +126,15 @@ const AcompanhanteForm = (
           {...register("enderecoAcompanhante")}
           error={!!errors.enderecoAcompanhante}
           helperText={errors.enderecoAcompanhante?.message}
-          InputLabelProps={{ shrink: true }}
-          FormHelperTextProps={{
-            sx: {
-              maxHeight: '0.4em',
-              margin: '0 0.2em', // Zera a margem inferior padrão
+          slotProps={{
+            inputLabel: {
+              shrink: !!enderecoAcompanhanteValue,
+            },
+            formHelperText: {
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em',
+              },
             },
           }}
         />
@@ -138,11 +151,15 @@ const AcompanhanteForm = (
           {...register("bairroAcompanhante")}
           error={!!errors.bairroAcompanhante}
           helperText={errors.bairroAcompanhante?.message}
-          InputLabelProps={{ shrink: true }}
-          FormHelperTextProps={{
-            sx: {
-              maxHeight: '0.4em',
-              margin: '0 0.2em', // Zera a margem inferior padrão
+          slotProps={{
+            inputLabel: {
+              shrink: !!bairroAcompanhanteValue,
+            },
+            formHelperText: {
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em',
+              },
             },
           }}
         />
@@ -157,10 +174,12 @@ const AcompanhanteForm = (
           {...register("numeroAcompanhante")}
           error={!!errors.numeroAcompanhante}
           helperText={errors.numeroAcompanhante?.message}
-          FormHelperTextProps={{
-            sx: {
-              maxHeight: '0.4em',
-              margin: '0 0.2em', // Zera a margem inferior padrão
+          slotProps={{
+            formHelperText: {
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em',
+              },
             },
           }}
         />
@@ -175,11 +194,15 @@ const AcompanhanteForm = (
           {...register("complementoAcompanhante")}
           error={!!errors.complementoAcompanhante}
           helperText={errors.complementoAcompanhante?.message}
-          InputLabelProps={{ shrink: true }}
-          FormHelperTextProps={{
-            sx: {
-              maxHeight: '0.4em',
-              margin: '0 0.2em', // Zera a margem inferior padrão
+          slotProps={{
+            inputLabel: {
+              shrink: !!complementoAcompanhanteValue,
+            },
+            formHelperText: {
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em',
+              },
             },
           }}
         />
@@ -196,10 +219,12 @@ const AcompanhanteForm = (
           {...register("vinculoPaciente")}
           error={!!errors.vinculoPaciente}
           helperText={errors.vinculoPaciente?.message}
-          FormHelperTextProps={{
-            sx: {
-              maxHeight: '0.4em',
-              margin: '0 0.2em', // Zera a margem inferior padrão
+          slotProps={{
+            formHelperText: {
+              sx: {
+                maxHeight: '0.4em',
+                margin: '0 0.2em',
+              },
             },
           }}
         />
