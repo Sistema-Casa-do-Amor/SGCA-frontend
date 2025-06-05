@@ -10,6 +10,7 @@ interface CompanionFormProps {
   watch: UseFormWatch<CompanionFormInputs>;
   control: Control<CompanionFormInputs>;
   handleCepSearch: (cep: string, targetFieldPrefix: "acompanhante") => Promise<void>;
+  isExistingCompanion: boolean; // Novo prop para indicar se o acompanhante já existe
 }
 
 const RegisterCompanionForm = (
@@ -19,6 +20,7 @@ const RegisterCompanionForm = (
     watch,
     control,
     handleCepSearch,
+    isExistingCompanion, // Recebe o novo prop
   }: CompanionFormProps
 ) => {
 
@@ -28,29 +30,8 @@ const RegisterCompanionForm = (
 
   return (
     <Grid container spacing={{ xs: 2, md: 3 }} sx={{ padding: '26px', maxWidth: '1200px' }}>
-      {/* SEXTA LINHA: Acompanhante e CPF do acompanhante */}
-      < Grid size={{ xs: 12, md: 8 }
-      }>
-        <TextField
-          id="acompanhanteNome"
-          label="Acompanhante"
-          variant="outlined"
-          fullWidth
-          placeholder="Digite o nome do acompanhante do paciente"
-          {...register("acompanhanteNome")}
-          error={!!errors.acompanhanteNome}
-          helperText={errors.acompanhanteNome?.message}
-          slotProps={{
-            formHelperText: {
-              sx: {
-                maxHeight: '0.4em',
-                margin: '0 0.2em',
-              },
-            },
-          }}
-        />
-      </Grid >
-      <Grid size={{ xs: 12, md: 4 }}>
+      {/* NOVO: CAMPO DE CPF para busca no topo */}
+      <Grid size={{ xs: 12, sm: 6, md: 4 }}>
         <Controller
           name="cpfAcompanhante"
           control={control}
@@ -58,7 +39,7 @@ const RegisterCompanionForm = (
             <MaskedTextField
               {...field}
               id="cpf-acompanhante"
-              label="CPF"
+              label="CPF do Acompanhante"
               variant="outlined"
               fullWidth
               placeholder="000.000.000-00"
@@ -66,8 +47,38 @@ const RegisterCompanionForm = (
               helperText={errors.cpfAcompanhante?.message}
               mask="000.000.000-00"
               lazy={true}
+              // Desabilita o campo se o acompanhante existente foi encontrado
+              disabled={isExistingCompanion}
+            // Não precisa de onBlur aqui, o watch no pai já aciona a busca
             />
           )}
+        />
+      </Grid>
+
+      {/* SEXTA LINHA: Acompanhante (agora no segundo nível, depois do CPF) */}
+      <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <TextField
+          id="acompanhanteNome"
+          label="Nome Completo do Acompanhante"
+          variant="outlined"
+          fullWidth
+          placeholder="Digite o nome completo do acompanhante"
+          {...register("acompanhanteNome")}
+          error={!!errors.acompanhanteNome}
+          helperText={errors.acompanhanteNome?.message}
+          slotProps={{
+            inputLabel: {
+              shrink: !!companionAddressValue,
+            },
+            formHelperText: {
+              sx: {
+                minHeight: '1.25em',
+                margin: '0 0.2em',
+              },
+            },
+          }}
+          // Desabilita o campo se o acompanhante existente foi encontrado (para evitar edição)
+          disabled={isExistingCompanion}
         />
       </Grid>
 
@@ -88,6 +99,7 @@ const RegisterCompanionForm = (
               helperText={errors.telefoneAcompanhante?.message}
               mask="00 00000-0000"
               lazy={true}
+              disabled={isExistingCompanion} // Desabilita
             />
           )}
         />
@@ -112,6 +124,7 @@ const RegisterCompanionForm = (
                 field.onBlur();
                 handleCepSearch(e.target.value, "acompanhante");
               }}
+              disabled={isExistingCompanion} // Desabilita
             />
           )}
         />
@@ -137,6 +150,7 @@ const RegisterCompanionForm = (
               },
             },
           }}
+          disabled={isExistingCompanion} // Desabilita
         />
       </Grid>
 
@@ -162,6 +176,7 @@ const RegisterCompanionForm = (
               },
             },
           }}
+          disabled={isExistingCompanion} // Desabilita
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -175,6 +190,9 @@ const RegisterCompanionForm = (
           error={!!errors.numeroAcompanhante}
           helperText={errors.numeroAcompanhante?.message}
           slotProps={{
+            inputLabel: {
+              shrink: !!companionAddressValue,
+            },
             formHelperText: {
               sx: {
                 maxHeight: '0.4em',
@@ -182,6 +200,7 @@ const RegisterCompanionForm = (
               },
             },
           }}
+          disabled={isExistingCompanion} // Desabilita
         />
       </Grid>
       <Grid size={{ xs: 12, md: 5 }}>
@@ -205,6 +224,7 @@ const RegisterCompanionForm = (
               },
             },
           }}
+          disabled={isExistingCompanion} // Desabilita
         />
       </Grid>
 
@@ -220,6 +240,9 @@ const RegisterCompanionForm = (
           error={!!errors.vinculoPaciente}
           helperText={errors.vinculoPaciente?.message}
           slotProps={{
+            inputLabel: {
+              shrink: !!companionAddressValue,
+            },
             formHelperText: {
               sx: {
                 maxHeight: '0.4em',
@@ -227,12 +250,17 @@ const RegisterCompanionForm = (
               },
             },
           }}
+        // O vínculo geralmente NÃO é desabilitado, pois pode ser diferente para cada paciente
         />
       </Grid>
 
       {/* Pode ajudar na cozinha? */}
       <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex', alignItems: 'center' }}>
-        <FormControl component="fieldset" error={!!errors.podeAjudarCozinha}>
+        <FormControl
+          component="fieldset"
+          error={!!errors.podeAjudarCozinha}
+          disabled={isExistingCompanion}
+        >
           <FormLabel component="legend">Pode ajudar na cozinha?</FormLabel>
           <Controller
             name="podeAjudarCozinha"

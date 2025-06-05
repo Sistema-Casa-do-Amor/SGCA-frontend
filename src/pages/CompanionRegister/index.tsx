@@ -51,6 +51,22 @@ const CompanionRegisterPage = () => {
     navigate('/patients');
   };
 
+  const [existingCompanionId, setExistingCompanionId] = useState<string | null>(null);
+
+  const initialCompanionDefaultValues = {
+    acompanhanteNome: "",
+    cpfAcompanhante: "",
+    telefoneAcompanhante: "",
+    cepAcompanhante: "",
+    enderecoAcompanhante: "",
+    bairroAcompanhante: "",
+    numeroAcompanhante: "",
+    complementoAcompanhante: "",
+    vinculoPaciente: "",
+    podeAjudarCozinha: "nao",
+    acompanhanteResponsavel: "nao",
+  } as const;
+
   const {
     register,
     handleSubmit,
@@ -60,25 +76,15 @@ const CompanionRegisterPage = () => {
     setValue,
     setError,
     clearErrors,
+    reset, // para limpar o formulário
   } = useForm<CompanionFormInputs>({
-    resolver: zodResolver(companionSchema), // Corrected schema name
+    resolver: zodResolver(companionSchema),
     mode: "onBlur",
-    defaultValues: {
-      acompanhanteNome: "",
-      cpfAcompanhante: "",
-      telefoneAcompanhante: "",
-      cepAcompanhante: "",
-      enderecoAcompanhante: "",
-      bairroAcompanhante: "",
-      numeroAcompanhante: "",
-      complementoAcompanhante: "",
-      vinculoPaciente: "",
-      podeAjudarCozinha: "nao",
-      acompanhanteResponsavel: "sim",
-    }
+    defaultValues: initialCompanionDefaultValues
   });
 
   const cepAcompanhanteValue = watch("cepAcompanhante");
+  const cpfAcompanhanteValue = watch("cpfAcompanhante");
 
   const handleCepSearch = useCallback(async (cep: string, targetFieldPrefix: "acompanhante") => {
     clearErrors(`${targetFieldPrefix}cep` as keyof CompanionFormInputs);
@@ -122,19 +128,83 @@ const CompanionRegisterPage = () => {
     }
   }, [cepAcompanhanteValue, handleCepSearch]);
 
+  // Função para buscar acompanhante pelo CPF
+  const searchCompanionByCpf = useCallback(async (cpf: string) => {
+    const cleanedCpf = cpf.replace(/\D/g, '');
+    if (cleanedCpf.length === 11) { // CPF completo
+      try {
+        // Simulação de chamada API: substitua por sua lógica real
+        // const foundCompanion = await companionApiService.getByCpf(cleanedCpf);
+        const foundCompanion = cleanedCpf === "11122233344" // Exemplo: CPF 111.222.333-44 existe
+          ? {
+            id: "comp123",
+            acompanhanteNome: "João da Silva",
+            cpfAcompanhante: "111.222.333-44",
+            telefoneAcompanhante: "77 99999-8888",
+            cepAcompanhante: "46750-000",
+            enderecoAcompanhante: "Rua do Acompanhante",
+            bairroAcompanhante: "Centro",
+            numeroAcompanhante: "123",
+            complementoAcompanhante: "Apto 101",
+            vinculoPaciente: "Pai",
+            podeAjudarCozinha: "sim",
+            acompanhanteResponsavel: "sim",
+          }
+          : null;
+
+        if (foundCompanion) {
+          showSnackbar("Acompanhante encontrado! Preenchendo dados.", "info");
+          // Preenche o formulário com os dados do acompanhante encontrado
+          reset(foundCompanion as CompanionFormInputs); // Use reset para preencher todos os campos
+          setExistingCompanionId(foundCompanion.id); // Armazena o ID do acompanhante existente
+          // Desabilite o campo de CPF após encontrar, ou torne-o somente leitura
+        } else {
+          showSnackbar("Acompanhante não encontrado. Prossiga com o cadastro.", "warning");
+          reset({ ...initialCompanionDefaultValues, cpfAcompanhante: cpf }); // Mantém o CPF e reseta o resto
+          setExistingCompanionId(null);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar acompanhante:", error);
+        showSnackbar("Erro ao buscar acompanhante. Tente novamente.", "error");
+        setExistingCompanionId(null);
+      }
+    } else if (cleanedCpf.length > 0 && cleanedCpf.length < 11) {
+      // Limpa os campos se o CPF estiver incompleto ou foi apagado
+      reset({ ...initialCompanionDefaultValues, cpfAcompanhante: cpf });
+      setExistingCompanionId(null);
+    }
+  }, [reset, showSnackbar]);
+
+  // Efeito para monitorar o CPF do acompanhante e acionar a busca
+  useEffect(() => {
+    // A busca só deve acontecer quando o CPF estiver completo
+    if (cpfAcompanhanteValue && cpfAcompanhanteValue.replace(/\D/g, '').length === 11) {
+      searchCompanionByCpf(cpfAcompanhanteValue);
+    }
+  }, [cpfAcompanhanteValue, searchCompanionByCpf]);
+
   const handleSaveCompanion = async (data: CompanionFormInputs) => {
     console.log("Formulário Válido, Dados do Acompanhante:", data);
     try {
-      // **AQUI: Faça a chamada API para salvar o acompanhante.**
-      // Ex: await someApiService.createCompanion(data);
+      if (existingCompanionId) {
+        // Se o acompanhante já existe, apenas vincule-o ao paciente
+        // Você precisará do ID do paciente, que pode vir da rota ou de um contexto
+        // Ex: const patientId = 'algum_id_do_paciente';
+        // await companionApiService.linkToPatient(existingCompanionId, patientId, data.vinculoPaciente);
+        showSnackbar("Acompanhante existente vinculado com sucesso!", "success");
+      } else {
+        // Se não existe, crie um novo acompanhante
+        // await companionApiService.createCompanion(data);
+        showSnackbar("Novo acompanhante cadastrado com sucesso!", "success");
+      }
+
       setOpenSaveDialog(false);
-      showSnackbar("Acompanhante cadastrado com sucesso!", "success");
       setTimeout(() => {
         navigate('/patients');
-      }, 2000);
+      }, 3000);
     } catch (error) {
-      console.error("Erro ao cadastrar acompanhante:", error);
-      showSnackbar("Erro ao cadastrar acompanhante. Tente novamente.", "error");
+      console.error("Erro ao processar acompanhante:", error);
+      showSnackbar("Erro ao processar acompanhante. Tente novamente.", "error");
     }
   };
 
@@ -160,6 +230,7 @@ const CompanionRegisterPage = () => {
           watch={watch}
           control={control}
           handleCepSearch={handleCepSearch}
+          isExistingCompanion={!!existingCompanionId} // Passa para o form se o acompanhante é existente
         />
 
         {/* Buttons for Save/Cancel on Companion Form */}
@@ -169,7 +240,7 @@ const CompanionRegisterPage = () => {
             css={[buttonStyles, saveButtonStyles]}
             onClick={handleOpenSaveDialog}
           >
-            Salvar Acompanhante
+            {existingCompanionId ? "Vincular Acompanhante Existente" : "Salvar Novo Acompanhante"}
           </Button>
           <Button
             variant="contained"
@@ -183,7 +254,7 @@ const CompanionRegisterPage = () => {
 
       {/* Snackbar Component */}
       <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={(_, reason) => handleSnackbarClose(reason as SnackbarCloseReason)}

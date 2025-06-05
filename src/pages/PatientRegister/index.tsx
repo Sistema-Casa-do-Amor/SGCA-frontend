@@ -201,7 +201,7 @@ const RegisterPage = () => {
 
       {/* Snackbar Component */}
       <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={(_, reason) => handleSnackbarClose(reason as SnackbarCloseReason)}
