@@ -29,7 +29,7 @@ export const phoneSchema = z.string()
 
 export const cepSchema = z.string()
   .min(1, "CEP é obrigatório.")
-  .regex(CEP_REGEX, "Formato de CEP inválido (XXXXX-XXX).");
+  .regex(CEP_REGEX, "CEP inválido (XXXXX-XXX).");
 
 
 

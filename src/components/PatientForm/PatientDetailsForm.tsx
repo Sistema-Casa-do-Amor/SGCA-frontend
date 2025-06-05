@@ -20,7 +20,8 @@ const PatientDetailsForm = (
 ) => {
   const usoSondaValue = watch("usoSonda");
   return (
-    <Grid container spacing={{ xs: 2, md: 3 }} sx={{ padding: '0 26px', maxWidth: '1200px' }}>
+    <Grid container spacing={{ xs: 2, md: 3 }} sx={{ padding: '0 26px', gap: '10px', maxWidth: '1200px' }}>
+
       {/* Condição de chegada */}
       <Grid size={{ xs: 12 }}>
         <FormControl component="fieldset" error={!!errors.condicaoChegada}>
@@ -44,45 +45,6 @@ const PatientDetailsForm = (
             </span>
           )}
         </FormControl>
-      </Grid>
-
-      {/* Tratamento e Diagnóstico */}
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <TextField
-          id="tratamento"
-          label="Tratamento"
-          variant="outlined"
-          fullWidth
-          placeholder="Tratamento"
-          multiline
-          rows={2}
-          {...register("tratamento")}
-          error={!!errors.tratamento}
-          helperText={errors.tratamento?.message}
-        />
-      </Grid>
-
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <TextField
-          id="diagnostico"
-          label="Diagnóstico"
-          variant="outlined"
-          fullWidth
-          placeholder="Diagnóstico"
-          multiline
-          rows={2}
-          {...register("diagnostico")}
-          error={!!errors.diagnostico}
-          helperText={errors.diagnostico?.message}
-          slotProps={{
-            formHelperText: {
-              sx: {
-                maxHeight: '0.4em',
-                margin: '0 0.2em',
-              },
-            },
-          }}
-        />
       </Grid>
 
       {/* Faz uso de sonda? */}

@@ -1,30 +1,30 @@
 import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, TextField } from "@mui/material";
 import { type UseFormRegister, type FieldErrors, Controller } from "react-hook-form";
-import type { PatientFormInputs } from "../../schemas/patientSchema";
 import type { Control, UseFormWatch } from "react-hook-form";
-import MaskedTextField from "./MaskedTextField";
+import MaskedTextField from "../MaskedTextField";
+import type { CompanionFormInputs } from "../../schemas/companionSchema";
 
-interface AcompanhanteFormProps {
-  register: UseFormRegister<PatientFormInputs>;
-  errors: FieldErrors<PatientFormInputs>;
-  watch: UseFormWatch<PatientFormInputs>;
-  control: Control<PatientFormInputs>;
-  handleCepSearch: (cep: string, targetFieldPrefix: "" | "acompanhante") => Promise<void>;
+interface CompanionFormProps {
+  register: UseFormRegister<CompanionFormInputs>;
+  errors: FieldErrors<CompanionFormInputs>;
+  watch: UseFormWatch<CompanionFormInputs>;
+  control: Control<CompanionFormInputs>;
+  handleCepSearch: (cep: string, targetFieldPrefix: "acompanhante") => Promise<void>;
 }
 
-const AcompanhanteForm = (
+const RegisterCompanionForm = (
   {
     register,
     errors,
     watch,
     control,
     handleCepSearch,
-  }: AcompanhanteFormProps
+  }: CompanionFormProps
 ) => {
 
-  const enderecoAcompanhanteValue = watch("enderecoAcompanhante");
-  const bairroAcompanhanteValue = watch("bairro");
-  const complementoAcompanhanteValue = watch("complemento");
+  const companionAddressValue = watch("enderecoAcompanhante");
+  const companionNeighborhoodValue = watch("bairroAcompanhante");
+  const companionComplementValue = watch("complementoAcompanhante");
 
   return (
     <Grid container spacing={{ xs: 2, md: 3 }} sx={{ padding: '26px', maxWidth: '1200px' }}>
@@ -32,14 +32,14 @@ const AcompanhanteForm = (
       < Grid size={{ xs: 12, md: 8 }
       }>
         <TextField
-          id="acompanhante"
+          id="acompanhanteNome"
           label="Acompanhante"
           variant="outlined"
           fullWidth
           placeholder="Digite o nome do acompanhante do paciente"
-          {...register("acompanhante")}
-          error={!!errors.acompanhante}
-          helperText={errors.acompanhante?.message}
+          {...register("acompanhanteNome")}
+          error={!!errors.acompanhanteNome}
+          helperText={errors.acompanhanteNome?.message}
           slotProps={{
             formHelperText: {
               sx: {
@@ -110,7 +110,7 @@ const AcompanhanteForm = (
               lazy={true}
               onBlur={(e) => {
                 field.onBlur();
-                handleCepSearch(e.target.value, "");
+                handleCepSearch(e.target.value, "acompanhante");
               }}
             />
           )}
@@ -128,7 +128,7 @@ const AcompanhanteForm = (
           helperText={errors.enderecoAcompanhante?.message}
           slotProps={{
             inputLabel: {
-              shrink: !!enderecoAcompanhanteValue,
+              shrink: !!companionAddressValue,
             },
             formHelperText: {
               sx: {
@@ -153,7 +153,7 @@ const AcompanhanteForm = (
           helperText={errors.bairroAcompanhante?.message}
           slotProps={{
             inputLabel: {
-              shrink: !!bairroAcompanhanteValue,
+              shrink: !!companionNeighborhoodValue,
             },
             formHelperText: {
               sx: {
@@ -196,7 +196,7 @@ const AcompanhanteForm = (
           helperText={errors.complementoAcompanhante?.message}
           slotProps={{
             inputLabel: {
-              shrink: !!complementoAcompanhanteValue,
+              shrink: !!companionComplementValue,
             },
             formHelperText: {
               sx: {
@@ -253,7 +253,7 @@ const AcompanhanteForm = (
         </FormControl>
       </Grid>
 
-      {/* O acompanhante é responsável pelo paciente? */}
+      {/* O acompanhante é responsável pelo paciente?
       <Grid size={{ xs: 12 }}>
         <FormControl component="fieldset" error={!!errors.acompanhanteResponsavel}>
           <FormLabel component="legend">O acompanhante é responsável pelo paciente?</FormLabel>
@@ -274,9 +274,9 @@ const AcompanhanteForm = (
             </span>
           )}
         </FormControl>
-      </Grid>
+      </Grid> */}
     </Grid>
   )
 }
 
-export default AcompanhanteForm;
+export default RegisterCompanionForm;

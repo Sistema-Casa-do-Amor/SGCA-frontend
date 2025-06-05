@@ -81,7 +81,7 @@ const MaskedTextField: React.FC<Props> = ({
         formHelperText: {
           ...(slotProps?.formHelperText || {}),
           sx: {
-            minHeight: '1.25em',
+            maxHeight: '0.4em',
             margin: '0 0.2em',
             padding: 0,
             ...(slotProps?.formHelperText?.sx || {}),

@@ -3,7 +3,7 @@ import { type UseFormRegister, type FieldErrors, type UseFormWatch, type UseForm
 import type { PatientFormInputs } from "../../schemas/patientSchema";
 import { useEffect } from "react";
 import { calculateAge } from "../../utils/dateCalculations";
-import MaskedTextField from "./MaskedTextField";
+import MaskedTextField from "../MaskedTextField";
 
 interface PatientPersonalDataFormProps {
   register: UseFormRegister<PatientFormInputs>;
@@ -43,7 +43,7 @@ const PatientPersonalDataForm = (
 
   return (
     <>
-      <Grid container spacing={{ xs: 2, md: 3 }} sx={{ padding: '0 26px', maxWidth: '1200px' }}>
+      <Grid container spacing={{ xs: 2, md: 3 }} sx={{ padding: '0 26px 18px', maxWidth: '1200px' }}>
 
         {/* PRIMEIRA LINHA: Nome Completo e CPF */}
         <Grid size={{ xs: 12, md: 8 }}>
@@ -190,7 +190,7 @@ const PatientPersonalDataForm = (
             slotProps={{
               formHelperText: {
                 sx: {
-                  maxHeight: '0.4em',
+                  maxHeight: 0,
                   margin: '0 0.2em',
                 },
               },
@@ -211,7 +211,7 @@ const PatientPersonalDataForm = (
             slotProps={{
               formHelperText: {
                 sx: {
-                  maxHeight: '0.4em',
+                  maxHeight: 0,
                   margin: '0 0.2em',
                 },
               },
@@ -305,7 +305,7 @@ const PatientPersonalDataForm = (
               },
               formHelperText: {
                 sx: {
-                  maxHeight: '0.4em',
+                  maxHeight: 0,
                   margin: '0 0.2em',
                 },
               },
@@ -325,7 +325,7 @@ const PatientPersonalDataForm = (
             slotProps={{
               formHelperText: {
                 sx: {
-                  maxHeight: '0.4em',
+                  maxHeight: 0,
                   margin: '0 0.2em',
                 },
               },
@@ -346,9 +346,41 @@ const PatientPersonalDataForm = (
               inputLabel: {
                 shrink: !!complementoValue,
               },
+            }}
+          />
+        </Grid>
+        {/* Tratamento e Diagnóstico */}
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField
+            id="tratamento"
+            label="Tratamento"
+            variant="outlined"
+            fullWidth
+            placeholder="Tratamento"
+            multiline
+            rows={2}
+            {...register("tratamento")}
+            error={!!errors.tratamento}
+            helperText={errors.tratamento?.message}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField
+            id="diagnostico"
+            label="Diagnóstico"
+            variant="outlined"
+            fullWidth
+            placeholder="Diagnóstico"
+            multiline
+            rows={2}
+            {...register("diagnostico")}
+            error={!!errors.diagnostico}
+            helperText={errors.diagnostico?.message}
+            slotProps={{
               formHelperText: {
                 sx: {
-                  maxHeight: '0.4em',
+                  maxHeight: 0,
                   margin: '0 0.2em',
                 },
               },

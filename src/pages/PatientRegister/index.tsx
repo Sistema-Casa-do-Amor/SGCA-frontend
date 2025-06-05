@@ -1,5 +1,5 @@
 import { Button, type AlertColor } from "@mui/material";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Grid from '@mui/material/Grid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { patientSchema, type PatientFormInputs } from '../../schemas/patientSchema';
@@ -9,16 +9,21 @@ import { useCallback, useEffect, useState } from "react";
 import { fetchAddressByCep } from "../../utils/cepService";
 import PatientPersonalDataForm from "../../components/PatientForm/PatientPersonalDataForm";
 import PatientDetailsForm from "../../components/PatientForm/PatientDetailsForm";
-import AcompanhanteForm from "../../components/PatientForm/AcompanhanteForm";
 import { buttonStyles, cancelButtonStyles, headerContainer, saveButtonStyles, TitleStyles } from "./styles";
 import Snackbar from '@mui/material/Snackbar';
 import type { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("success");
+
+  const [openCancelDialog, setOpenCancelDialog] = useState(false);
+  const [openSaveDialog, setOpenSaveDialog] = useState(false);
 
   const showSnackbar = useCallback((message: string, severity: AlertColor) => {
     setSnackbarMessage(message);
@@ -62,20 +67,9 @@ const RegisterPage = () => {
       bairro: "",
       numero: "",
       complemento: "",
-      acompanhante: "",
-      cpfAcompanhante: "",
-      telefoneAcompanhante: "",
-      cepAcompanhante: "",
-      enderecoAcompanhante: "",
-      bairroAcompanhante: "",
-      numeroAcompanhante: "",
-      complementoAcompanhante: "",
       tratamento: "",
       diagnostico: "",
-      vinculoPaciente: "",
       seForOutra: "",
-      podeAjudarCozinha: "nao",
-      acompanhanteResponsavel: "sim",
       condicaoChegada: "de_ambulancia",
       usoSonda: "nao",
       usoCurativo: "sim",
@@ -83,43 +77,58 @@ const RegisterPage = () => {
     }
   });
 
-  const onSubmit = (data: PatientFormInputs) => {
+  const handleSavePatient = async (data: PatientFormInputs) => {
     console.log("Formulário Válido, Dados:", data);
     try {
-      // Fazer a chamada API (ex: axios.post('/api/patients', data)) aqui, usar hooks
-      // await someApiService.createPatient(data); // Exemplo de chamada API
+      // **AQUI: Faça a chamada API para salvar o paciente.**
+      // Ex: await someApiService.createPatient(data);
+      setOpenSaveDialog(false);
       showSnackbar("Paciente cadastrado com sucesso!", "success");
-      // navigate('/patients');
+      setTimeout(() => {
+        navigate('/companion-register');
+      }, 2000)
     } catch (error) {
       console.error("Erro ao cadastrar paciente:", error);
       showSnackbar("Erro ao cadastrar paciente. Tente novamente.", "error");
+      setOpenSaveDialog(false);
     }
   };
 
   const onError = (errors: FieldErrors<PatientFormInputs>) => {
     console.log("Erros de validação:", errors);
     showSnackbar("Por favor, corrija os erros no formulário.", "error");
+    setOpenSaveDialog(false);
   };
 
-  const cepValue = watch("cep");
-  const cepAcompanhanteValue = watch("cepAcompanhante");
+  const handleOpenCancelDialog = () => setOpenCancelDialog(true);
+  const handleCloseCancelDialog = () => setOpenCancelDialog(false);
+  const handleConfirmCancel = () => {
+    setOpenCancelDialog(false);
+    navigate('/patients');
+  };
 
-  // Função para buscar e preencher o endereço
+  const handleOpenSaveDialog = () => {
+    handleSubmit(() => setOpenSaveDialog(true), onError)();
+  };
+  const handleCloseSaveDialog = () => setOpenSaveDialog(false);
+  const handleConfirmSave = handleSubmit(handleSavePatient, onError);
+
+  const cepValue = watch("cep");
+
   const handleCepSearch = useCallback(async (cep: string, targetFieldPrefix: "" | "acompanhante") => {
-    // Limpa erros anteriores do CEP
     clearErrors(`${targetFieldPrefix}cep` as keyof PatientFormInputs);
-    // Limpa os campos de endereço enquanto a busca ocorre ou se o CEP for inválido
     setValue(`${targetFieldPrefix}endereco` as keyof PatientFormInputs, "");
     setValue(`${targetFieldPrefix}bairro` as keyof PatientFormInputs, "");
     setValue(`${targetFieldPrefix}complemento` as keyof PatientFormInputs, "");
 
-    if (cep.replace(/\D/g, '').length === 8) {
+    const cleanedCep = cep.replace(/\D/g, '');
+    if (cleanedCep.length === 8) {
       try {
-        const addressData = await fetchAddressByCep(cep);
+        const addressData = await fetchAddressByCep(cleanedCep);
         if (addressData) {
           setValue(`${targetFieldPrefix}endereco` as keyof PatientFormInputs, addressData.logradouro);
           setValue(`${targetFieldPrefix}bairro` as keyof PatientFormInputs, addressData.bairro);
-          setValue(`${targetFieldPrefix}complemento` as keyof PatientFormInputs, addressData.complemento);
+          setValue(`${targetFieldPrefix}complemento` as keyof PatientFormInputs, addressData.complemento || "");
         } else {
           setError(`${targetFieldPrefix}cep` as keyof PatientFormInputs, {
             type: "manual",
@@ -135,18 +144,23 @@ const RegisterPage = () => {
         });
         showSnackbar("Erro ao buscar CEP. Tente novamente.", "error");
       }
+    } else if (cleanedCep.length > 0 && cleanedCep.length < 8) {
+      setValue(`${targetFieldPrefix}endereco` as keyof PatientFormInputs, "");
+      setValue(`${targetFieldPrefix}bairro` as keyof PatientFormInputs, "");
+      setValue(`${targetFieldPrefix}complemento` as keyof PatientFormInputs, "");
     }
   }, [setValue, setError, clearErrors, showSnackbar]);
 
-  // Efeito para monitorar o CEP do paciente
   useEffect(() => {
-    // A busca será acionada quando o campo perder o foco (onBlur)
-  }, [cepValue, cepAcompanhanteValue, handleCepSearch]);
+    if (cepValue && cepValue.replace(/\D/g, '').length === 8) {
+      handleCepSearch(cepValue, "");
+    }
+  }, [cepValue, handleCepSearch]);
 
   return (
     <div css={headerContainer}>
       <h1 css={TitleStyles}>Cadastrar Paciente</h1>
-      <form onSubmit={handleSubmit(onSubmit, onError)}>
+      <form noValidate>
 
         {/* Dados Pessoais */}
         <PatientPersonalDataForm
@@ -154,15 +168,6 @@ const RegisterPage = () => {
           errors={errors}
           watch={watch}
           setValue={setValue}
-          handleCepSearch={handleCepSearch}
-          control={control}
-        />
-
-        {/* Dados Acompanhante */}
-        <AcompanhanteForm
-          register={register}
-          errors={errors}
-          watch={watch}
           handleCepSearch={handleCepSearch}
           control={control}
         />
@@ -178,26 +183,25 @@ const RegisterPage = () => {
         {/* Botões Salvar e Cancelar */}
         <Grid size={{ xs: 12 }} sx={{ display: 'flex', justifyContent: 'flex-start', mt: 4, ml: 3 }}>
           <Button
-            component={Link}
-            to="/patients"
             variant="contained"
-            css={[buttonStyles, cancelButtonStyles]}
+            css={[buttonStyles, saveButtonStyles]}
+            onClick={handleOpenSaveDialog}
           >
-            Cancelar
+            Salvar
           </Button>
           <Button
             variant="contained"
-            css={[buttonStyles, saveButtonStyles]}
-            type="submit"
+            css={[buttonStyles, cancelButtonStyles]}
+            onClick={handleOpenCancelDialog}
           >
-            Salvar
+            Cancelar
           </Button>
         </Grid>
       </form>
 
       {/* Snackbar Component */}
       <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={(_, reason) => handleSnackbarClose(reason as SnackbarCloseReason)}
@@ -211,9 +215,30 @@ const RegisterPage = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {/* Diálogo de Confirmação para Cancelar */}
+      <ConfirmationDialog
+        open={openCancelDialog}
+        onClose={handleCloseCancelDialog}
+        onConfirm={handleConfirmCancel} // Navega para /patients
+        title="Confirmar Cancelamento"
+        message="Tem certeza que deseja cancelar? Você perderá todos os dados preenchidos."
+        confirmButtonText="Sim, Cancelar"
+        cancelButtonText="Não, Continuar Editando"
+      />
+
+      {/* Diálogo de Confirmação para Salvar */}
+      <ConfirmationDialog
+        open={openSaveDialog}
+        onClose={handleCloseSaveDialog}
+        onConfirm={handleConfirmSave} // Chama handleSubmit(handleSavePatient, onError)
+        title="Confirmar Salvamento"
+        message="Tem certeza que deseja salvar o paciente?"
+        confirmButtonText="Sim, Salvar"
+        cancelButtonText="Não, Voltar"
+      />
     </div>
   );
 }
-
 
 export default RegisterPage;
