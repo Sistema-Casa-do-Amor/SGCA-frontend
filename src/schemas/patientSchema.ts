@@ -12,7 +12,7 @@ export const patientSchema = z.object({
   nomeCompletoPaciente: requiredString.max(255, "Nome muito longo."),
   cpfPaciente: cpfSchema,
   dataNascimento: dateSchema,
-  idade: z.string(),
+  idade: z.string().trim(),
   naturalidade: requiredString,
   rg: rgSchema,
   nomeMae: requiredString,
@@ -22,8 +22,8 @@ export const patientSchema = z.object({
   endereco: requiredString,
   bairro: requiredString,
   numero: requiredString,
-  complemento: z.string().optional(),
-  tratamento: z.string().optional(),
+  complemento: z.string().trim().optional(),
+  tratamento: z.string().trim().optional(),
   diagnostico: requiredString,
   condicaoChegada: z.enum(["de_ambulancia", "maca", "cadeira_rodas", "nenhum"], {
     errorMap: () => ({ message: "Selecione a condição de chegada." }),
@@ -37,7 +37,7 @@ export const patientSchema = z.object({
   usoSonda: z.enum(["nao", "sonda_foley", "cislostomia", "outra"], {
     errorMap: () => ({ message: "Selecione sobre o uso de sonda." }),
   }),
-  seForOutra: z.string().optional().transform(e => e === "" ? undefined : e),
+  seForOutra: z.string().trim().optional().transform(e => e === "" ? undefined : e),
 }).superRefine((data, ctx) => {
 
   // Lógica de validação condicional para 'seForOutra'

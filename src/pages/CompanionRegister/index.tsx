@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchAddressByCep } from "../../utils/cepService";
 import RegisterCompanionForm from "../../components/RegisterCompanionForm";
 import Snackbar from '@mui/material/Snackbar';
@@ -11,7 +11,7 @@ import type { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { useNavigate } from "react-router-dom";
 import { companionSchema, type CompanionFormInputs } from "../../schemas/companionSchema";
-import { buttonStyles, headerContainer, saveButtonStyles, TitleStyles } from "../PatientRegister/styles";
+import { buttonStyles, cancelButtonStyles, headerContainer, saveButtonStyles, TitleStyles } from "../PatientRegister/styles";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 const CompanionRegisterPage = () => {
@@ -47,13 +47,16 @@ const CompanionRegisterPage = () => {
   const handleOpenCancelDialog = () => setOpenCancelDialog(true);
   const handleCloseCancelDialog = () => setOpenCancelDialog(false);
   const handleConfirmCancel = () => {
+    showSnackbar("Acompanhante não cadastrado", "warning");
+    setTimeout(() => {
+      navigate('/patients');
+    }, 1000);
     setOpenCancelDialog(false);
-    navigate('/patients');
   };
 
   const [existingCompanionId, setExistingCompanionId] = useState<string | null>(null);
 
-  const initialCompanionDefaultValues = {
+  const initialCompanionDefaultValues = useMemo(() => ({
     acompanhanteNome: "",
     cpfAcompanhante: "",
     telefoneAcompanhante: "",
@@ -65,7 +68,7 @@ const CompanionRegisterPage = () => {
     vinculoPaciente: "",
     podeAjudarCozinha: "nao",
     acompanhanteResponsavel: "nao",
-  } as const;
+  }) as const, []);
 
   const {
     register,
@@ -76,7 +79,7 @@ const CompanionRegisterPage = () => {
     setValue,
     setError,
     clearErrors,
-    reset, // para limpar o formulário
+    reset,
   } = useForm<CompanionFormInputs>({
     resolver: zodResolver(companionSchema),
     mode: "onBlur",
@@ -153,14 +156,12 @@ const CompanionRegisterPage = () => {
           : null;
 
         if (foundCompanion) {
-          showSnackbar("Acompanhante encontrado! Preenchendo dados.", "info");
-          // Preenche o formulário com os dados do acompanhante encontrado
-          reset(foundCompanion as CompanionFormInputs); // Use reset para preencher todos os campos
-          setExistingCompanionId(foundCompanion.id); // Armazena o ID do acompanhante existente
-          // Desabilite o campo de CPF após encontrar, ou torne-o somente leitura
+          showSnackbar("Acompanhante encontrado! Preenchendo dados.", "success");
+          reset(foundCompanion as CompanionFormInputs);
+          setExistingCompanionId(foundCompanion.id);
         } else {
           showSnackbar("Acompanhante não encontrado. Prossiga com o cadastro.", "warning");
-          reset({ ...initialCompanionDefaultValues, cpfAcompanhante: cpf }); // Mantém o CPF e reseta o resto
+          reset({ ...initialCompanionDefaultValues, cpfAcompanhante: cpf });
           setExistingCompanionId(null);
         }
       } catch (error) {
@@ -169,15 +170,12 @@ const CompanionRegisterPage = () => {
         setExistingCompanionId(null);
       }
     } else if (cleanedCpf.length > 0 && cleanedCpf.length < 11) {
-      // Limpa os campos se o CPF estiver incompleto ou foi apagado
       reset({ ...initialCompanionDefaultValues, cpfAcompanhante: cpf });
       setExistingCompanionId(null);
     }
-  }, [reset, showSnackbar]);
+  }, [reset, showSnackbar, initialCompanionDefaultValues]);
 
-  // Efeito para monitorar o CPF do acompanhante e acionar a busca
   useEffect(() => {
-    // A busca só deve acontecer quando o CPF estiver completo
     if (cpfAcompanhanteValue && cpfAcompanhanteValue.replace(/\D/g, '').length === 11) {
       searchCompanionByCpf(cpfAcompanhanteValue);
     }
@@ -216,6 +214,8 @@ const CompanionRegisterPage = () => {
 
   const handleConfirmSave = handleSubmit(handleSaveCompanion, onError);
 
+
+
   return (
     <div css={headerContainer}>
       <h1 css={TitleStyles}>Cadastrar Acompanhante</h1>
@@ -230,10 +230,10 @@ const CompanionRegisterPage = () => {
           watch={watch}
           control={control}
           handleCepSearch={handleCepSearch}
-          isExistingCompanion={!!existingCompanionId} // Passa para o form se o acompanhante é existente
+          isExistingCompanion={!!existingCompanionId}
         />
 
-        {/* Buttons for Save/Cancel on Companion Form */}
+        {/* Botões Salvar e Cancelar */}
         <Grid size={{ xs: 12 }} sx={{ display: 'flex', justifyContent: 'flex-start', mt: 4, ml: 3 }}>
           <Button
             variant="contained"
@@ -245,7 +245,7 @@ const CompanionRegisterPage = () => {
           <Button
             variant="contained"
             onClick={handleOpenCancelDialog}
-            css={[buttonStyles, { backgroundColor: 'grey.500' }]}
+            css={[buttonStyles, cancelButtonStyles]}
           >
             Não Cadastrar Acompanhante
           </Button>
@@ -273,7 +273,7 @@ const CompanionRegisterPage = () => {
       <ConfirmationDialog
         open={openSaveDialog}
         onClose={handleCloseSaveDialog}
-        onConfirm={handleConfirmSave} // Use the combined submit/save function
+        onConfirm={handleConfirmSave}
         title="Confirmar Salvamento do Acompanhante"
         message="Tem certeza que deseja salvar os dados do acompanhante?"
         confirmButtonText="Sim, Salvar"
