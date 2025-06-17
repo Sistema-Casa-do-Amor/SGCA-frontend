@@ -14,6 +14,8 @@ import Snackbar from '@mui/material/Snackbar';
 import type { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import ConfirmationDialog from "../../components/ConfirmationDialog";
+import type { PessoaFisicaDTO } from "../../api/api.gateway.dto";
+import { apiGateway } from "../../api/api.gateway";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -80,8 +82,23 @@ const RegisterPage = () => {
   const handleSavePatient = async (data: PatientFormInputs) => {
     console.log("Formulário Válido, Dados:", data);
     try {
-      // **AQUI: Faça a chamada API para salvar o paciente.**
-      // Ex: await someApiService.createPatient(data);
+      const paciente: PessoaFisicaDTO = {
+        nome: data.nomeCompletoPaciente,
+        telefone: data.telefone,
+        dataNascimento: data.dataNascimento, // Aqui está o ajuste!
+        cpf: data.cpfPaciente,
+        rg: data.rg,
+        naturalidade: data.naturalidade,
+        profissao: data.profissao,
+        endereco: {
+          rua: data.endereco,
+          numero: data.numero,
+          bairro: data.bairro,
+          cep: data.cep,
+        },
+      };
+
+      await apiGateway.createPessoaFisica("your-auth-token", paciente); // chamada real
       setOpenSaveDialog(false);
       showSnackbar("Paciente cadastrado com sucesso!", "success");
       setTimeout(() => {
