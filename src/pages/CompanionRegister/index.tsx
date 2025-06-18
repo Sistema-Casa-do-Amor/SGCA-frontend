@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchAddressByCep } from "../../utils/cepService";
-import RegisterCompanionForm from "../../components/RegisterCompanionForm";
+import RegisterCompanionForm from "../../components/CompanionForm";
 import Snackbar from '@mui/material/Snackbar';
 import type { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
@@ -213,8 +213,6 @@ const CompanionRegisterPage = () => {
   };
 
   const handleConfirmSave = handleSubmit(handleSaveCompanion, onError);
-
-
 
   return (
     <div css={headerContainer}>

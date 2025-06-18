@@ -15,7 +15,7 @@ import type { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 
-const RegisterPage = () => {
+const PatientRegisterPage = () => {
   const navigate = useNavigate();
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -241,4 +241,4 @@ const RegisterPage = () => {
   );
 }
 
-export default RegisterPage;
+export default PatientRegisterPage;
