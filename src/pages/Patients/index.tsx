@@ -3,6 +3,7 @@ import { Box, FormControl, IconButton, Input, InputAdornment, InputLabel, Typogr
 import SearchIcon from '@mui/icons-material/Search';
 import Button from '@mui/material/Button';
 import { Link } from "react-router-dom";
+import TablePatients from "../../components/Table/TablePatients";
 
 const headerContainer = css({
   display: "flex",
@@ -12,7 +13,8 @@ const headerContainer = css({
   minHeight: "56px",
   marginTop: "24px",
   marginBottom: "24px",
-  width: '100%'
+  paddingBottom: "15px",
+  width: '80%', 
 });
 
 const TitleStyles = css({
@@ -74,6 +76,7 @@ const Patients = () => {
             Adicionar
           </Button>
         </Box>
+      <TablePatients />
       </div >
       {/* ...restante do conteúdo... */}
     </>
