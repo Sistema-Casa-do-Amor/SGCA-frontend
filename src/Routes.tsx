@@ -3,7 +3,8 @@ import Layout from './components/Layout';
 import Users from './pages/Users';
 import CompanionRegisterPage from './pages/CompanionRegister';
 import Patients from './pages/Patients';
-import RegisterPage from './pages/PatientRegister';
+import PatientRegisterPage from './pages/PatientRegister';
+import UserRegisterPage from './pages/UserRegister';
 import LoginPage from './pages/Login';
 
 const AppRoutes = () => (
@@ -16,8 +17,9 @@ const AppRoutes = () => (
     <Route path="/" element={<Layout />}>
       <Route index path="/patients" element={<Patients />} />
       <Route path="/users" element={<Users />} />
-      <Route path='/patient/register' element={<RegisterPage />} />
-      <Route path='/patient/companion-register' element={<CompanionRegisterPage />}></Route>
+      <Route path='/patient/register' element={<PatientRegisterPage />} />
+      <Route path='/patient/companion-register' element={<CompanionRegisterPage />} />
+      <Route path="/user/register" element={<UserRegisterPage />} />
     </Route>
 
     {/* adicionar uma rota de fallback para 404 */}
