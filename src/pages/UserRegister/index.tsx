@@ -56,8 +56,6 @@ const UserRegisterPage = () => {
     handleSubmit,
     formState: { errors },
     control,
-    watch,
-    setValue,
   } = useForm<UserFormInputs>({
     resolver: zodResolver(userSchema),
     mode: "onBlur",
@@ -110,8 +108,6 @@ const UserRegisterPage = () => {
         <UserForm
           register={register}
           errors={errors}
-          watch={watch}
-          setValue={setValue}
           control={control}
         />
 
@@ -168,7 +164,7 @@ const UserRegisterPage = () => {
         onClose={handleCloseSaveDialog}
         onConfirm={handleConfirmSave}
         title="Confirmar Salvamento"
-        message="Tem certeza que deseja salvar o paciente?"
+        message="Tem certeza que deseja salvar o profissional?"
         confirmButtonText="Sim, Salvar"
         cancelButtonText="Não, Voltar"
       />

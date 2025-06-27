@@ -6,7 +6,7 @@ export const stylesContainer = css({
   alignItems: "center",
   flexDirection: "column",
   gap: "16px",
-  maxWidth: "100%",
+  width: "100%",
   minHeight: "56px",
   marginTop: "24px",
   marginBottom: "24px",

@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 
-export const headerContainer = css({
+export const stylesContainer = css({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",

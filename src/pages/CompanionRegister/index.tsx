@@ -11,7 +11,7 @@ import type { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { useNavigate } from "react-router-dom";
 import { companionSchema, type CompanionFormInputs } from "../../schemas/companionSchema";
-import { buttonStyles, cancelButtonStyles, headerContainer, saveButtonStyles, TitleStyles } from "../PatientRegister/styles";
+import { buttonStyles, cancelButtonStyles, stylesContainer, saveButtonStyles, TitleStyles } from "../PatientRegister/styles";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 const CompanionRegisterPage = () => {
@@ -215,7 +215,7 @@ const CompanionRegisterPage = () => {
   const handleConfirmSave = handleSubmit(handleSaveCompanion, onError);
 
   return (
-    <div css={headerContainer}>
+    <div css={stylesContainer}>
       <h1 css={TitleStyles}>Cadastrar Acompanhante</h1>
 
       <form
