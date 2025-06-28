@@ -8,7 +8,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string, username: string) => void;
   logout: () => void;
-  isLoading: boolean; // gerenciar o estado de carregamento inicial
+  isLoading: boolean;
 }
 
 // criando o context
@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Efeito para verificar o token no localStorage/sessionStorage ao carregar a aplicação
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
-    const storedUsername = localStorage.getItem('authUsername'); // Se você também armazena o username
+    const storedUsername = localStorage.getItem('authUsername');
     if (storedToken && storedUsername) {
       // Aqui você poderia, opcionalmente, validar o token com uma API
       // Por simplicidade, vamos apenas assumir que é válido
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser({ username: storedUsername });
       setIsAuthenticated(true);
     }
-    setIsLoading(false); // Finaliza o carregamento
+    setIsLoading(false);
   }, []);
 
   const login = (newToken: string, username: string) => {

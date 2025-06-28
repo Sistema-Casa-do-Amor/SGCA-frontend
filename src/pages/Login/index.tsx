@@ -1,25 +1,60 @@
-import { Box, Button, Container, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Alert, Box, Button, Container, IconButton, InputAdornment, Snackbar, TextField } from "@mui/material";
 import { BoxStyles, ButtonStyles, ContainerLoginStyles, imgStyles, TextFieldStyles } from "./styles";
 import { useState } from "react";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useAuth } from "../../hooks/useAuth";
+import { useLocation, useNavigate } from "react-router-dom";
+import { loginApi } from "../../api/api";
 
 const Login = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('info');
+
+
+  // Mostrar e não mostrar senha
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSnackbarClose = (reason: string) => {
+    if (reason === 'clickaway') return;
+    setSnackbarOpen(false);
+  };
+
+  const showSnackbar = (message: string, severity: 'success' | 'error' | 'info' | 'warning') => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Username:', username);
-    console.log('Password:', password);
-    // Lógica de login aqui (chamar a função login do AuthContext, por exemplo)
+    try {
+      const { token } = await loginApi(username, password);
+      login(token, username);
+      showSnackbar("Login realizado com sucesso!", "success");
+      const from = location.state?.from?.pathname || "/";
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 2000);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        showSnackbar(error.message, "error");
+      } else {
+        showSnackbar("Ocorreu um erro desconhecido.", "error");
+      }
+    }
   };
 
   return (
@@ -75,6 +110,22 @@ const Login = () => {
           Login
         </Button>
       </Container>
+
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={(_, reason) => handleSnackbarClose(reason as string)}
+      >
+        <Alert
+          onClose={() => handleSnackbarClose('clickaway')}
+          severity={snackbarSeverity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 };
