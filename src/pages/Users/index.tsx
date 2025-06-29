@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import Button from '@mui/material/Button';
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const headerContainer = css({
   display: "flex",
@@ -33,19 +34,22 @@ const buttonStyles = css({
 });
 
 const Users = () => {
+  const { user } = useAuth();
   return (
     <>
       <div css={headerContainer}>
         <h1 css={TitleStyles}>Profissionais</h1>
         {/* Esse botão só deverá aparecer se o users tiver permissão */}
-        <Button
-          component={Link}
-          to="/user/register"
-          variant="contained"
-          css={buttonStyles}
-        >
-          Adicionar
-        </Button>
+        {Array.isArray(user?.roles) && user?.roles.includes("ADMIN") && (
+          <Button
+            component={Link}
+            to="/user/register"
+            variant="contained"
+            css={buttonStyles}
+          >
+            Adicionar
+          </Button>
+        )}
       </div>
       {/* ...restante do conteúdo... */}
     </>

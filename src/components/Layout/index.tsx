@@ -16,9 +16,11 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import GroupsIcon from '@mui/icons-material/Groups';
-import { Outlet } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { CssBaseline, Divider } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 const drawerWidth = 280;
 
@@ -69,6 +71,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function Layout() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -78,6 +82,13 @@ export default function Layout() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleLogout = () => {
+    setTimeout(() => {
+      logout();
+      navigate("/login", { replace: true });
+    }, 1000)
   };
 
   return (
@@ -120,6 +131,19 @@ export default function Layout() {
           <Typography variant="h6" noWrap component="div" sx={{ marginLeft: '30px' }}>
             SISTEMA DE GERENCIAMENTO DA CASA DO AMOR
           </Typography>
+
+          {/* Isto faz o botão de logout ficar à direita */}
+          <Box sx={{ flexGrow: 1 }} />
+
+          {/* Botão de Logout */}
+          <IconButton
+            color="inherit"
+            onClick={handleLogout}
+            aria-label="logout"
+            edge="end"
+          >
+            <LogoutIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       {/* Barra lateral */}
