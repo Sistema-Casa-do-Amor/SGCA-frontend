@@ -1,12 +1,13 @@
 import { createContext, useState, useEffect, type ReactNode } from 'react';
-
+export interface UserType {
+  username: string;
+  roles: string[]; // ex.: ["Médica", "Recepcionista"]
+}
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: {
-    username: string;
-  } | null;
+  user: UserType | null;
   token: string | null;
-  login: (token: string, username: string) => void;
+  login: (token: string, user: UserType) => void;
   logout: () => void;
   isLoading: boolean;
 }
@@ -21,29 +22,32 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<{ username: string } | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Começa como true para verificar o token
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Efeito para verificar o token no localStorage/sessionStorage ao carregar a aplicação
+  // verificar o token no localStorage/sessionStorage ao carregar a aplicação
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
-    const storedUsername = localStorage.getItem('authUsername');
-    if (storedToken && storedUsername) {
-      // Aqui você poderia, opcionalmente, validar o token com uma API
-      // Por simplicidade, vamos apenas assumir que é válido
+    const storedUser = localStorage.getItem('authUsername');
+    if (storedToken && storedUser) {
       setToken(storedToken);
-      setUser({ username: storedUsername });
+      try {
+        const parsedUser: UserType = JSON.parse(storedUser);
+        setUser(parsedUser);
+      } catch {
+        setUser(null);
+      }
       setIsAuthenticated(true);
     }
     setIsLoading(false);
   }, []);
 
-  const login = (newToken: string, username: string) => {
+  const login = (newToken: string, userData: UserType) => {
     localStorage.setItem('authToken', newToken);
-    localStorage.setItem('authUsername', username);
+    localStorage.setItem('authUsername', JSON.stringify(userData));
     setToken(newToken);
-    setUser({ username });
+    setUser(userData);
     setIsAuthenticated(true);
   };
 

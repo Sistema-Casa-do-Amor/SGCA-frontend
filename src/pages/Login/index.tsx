@@ -41,8 +41,8 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { token } = await loginApi(username, password);
-      login(token, username);
+      const { token } = await loginApi({ username, roles: [] }, password);
+      login(token, { username, roles: [] });
       showSnackbar("Login realizado com sucesso!", "success");
       const from = location.state?.from?.pathname || "/";
       setTimeout(() => {
