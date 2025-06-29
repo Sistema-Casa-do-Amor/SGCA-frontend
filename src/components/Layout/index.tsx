@@ -171,7 +171,7 @@ export default function Layout() {
                 padding: '8px 75px',
               }}
             >
-              <ListItemIcon sx={{ color: '#000000da', minWidth: 0, mr: 1 }}>
+              <ListItemIcon sx={{ color: '#000000da', minWidth: 0 }}>
                 <PeopleAltIcon />
               </ListItemIcon>
               <ListItemText
@@ -195,7 +195,7 @@ export default function Layout() {
                 padding: '8px 75px',
               }}
             >
-              <ListItemIcon sx={{ color: '#000000da', minWidth: 0, mr: 1 }}>
+              <ListItemIcon sx={{ color: '#000000da', minWidth: 0 }}>
                 <GroupsIcon />
               </ListItemIcon>
               <ListItemText
