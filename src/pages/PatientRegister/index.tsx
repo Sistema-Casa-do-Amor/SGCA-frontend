@@ -85,7 +85,7 @@ const PatientRegisterPage = () => {
       setOpenSaveDialog(false);
       showSnackbar("Paciente cadastrado com sucesso!", "success");
       setTimeout(() => {
-        navigate('/patient/companion-register');
+        navigate('/patient/companion/register');
       }, 2000)
     } catch (error) {
       console.error("Erro ao cadastrar paciente:", error);

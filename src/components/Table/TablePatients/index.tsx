@@ -2,19 +2,19 @@ import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from "@mui/material"
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Column {
-    id: 'id' | 'name' | 'cpf' | 'date' | 'acoes';
+    id: 'nome' | 'cpf' | 'nome-da-mae' | 'acoes';
     label: string;
     minWidth?: number;
     align?: 'center';
 }
 
 const columns: readonly Column[] = [
-    { id: 'id', label: 'ID', minWidth: 100 },
-    { id: 'name', label: 'Nome', minWidth: 170 },
+    { id: 'nome', label: 'Nome', minWidth: 170 },
     { id: 'cpf', label: 'CPF', minWidth: 170 },
-    { id: 'date', label: 'Data', minWidth: 170 },
+    { id: 'nome-da-mae', label: 'Nome da mãe', minWidth: 170 },
     { id: 'acoes', label: 'Ações', minWidth: 170, align: 'center' },
 ]
 
@@ -33,6 +33,7 @@ const rows = [
 ]
 
 const TablePatients = () => {
+    const navigate = useNavigate();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -45,8 +46,12 @@ const TablePatients = () => {
         setPage(0);
     }
 
+    // Passar o paciente a partir do id 
     const handleViewMedicalRecords = (id: number) => {
         console.log('Visualizar ID: ', id);
+        setTimeout(() => {
+            navigate("/patient/information");
+        }, 1000);
     }
 
     const handleEdit = (id: number) => {
@@ -76,20 +81,19 @@ const TablePatients = () => {
                             .map((row) => {
                                 return (
                                     <TableRow key={row.id}>
-                                        <TableCell>{row.id}</TableCell>
                                         <TableCell>{row.name}</TableCell>
                                         <TableCell>{row.cpf}</TableCell>
                                         <TableCell>{row.date}</TableCell>
                                         <TableCell align="center">
                                             <IconButton color="primary"
-                                            onClick={() => handleViewMedicalRecords(row.id)}
-                                            aria-label="visualizar"
+                                                onClick={() => handleViewMedicalRecords(row.id)}
+                                                aria-label="visualizar"
                                             >
                                                 <VisibilityIcon />
                                             </IconButton>
                                             <IconButton color="success"
-                                            onClick={() => handleEdit(row.id)}
-                                            aria-label="editar"
+                                                onClick={() => handleEdit(row.id)}
+                                                aria-label="editar"
                                             >
                                                 <EditIcon />
                                             </IconButton>
