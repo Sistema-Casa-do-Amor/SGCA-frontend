@@ -8,10 +8,12 @@ import UserRegisterPage from './pages/UserRegister';
 import LoginPage from './pages/Login';
 import NotFoundPage from './pages/NotFoundPage';
 import PrivateRoute from './components/PrivateRoute';
+import PatientInformation from './pages/PatientInformation';
+import MedicalRecordPage from './pages/MedicalRecord';
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/login" element={<LoginPage />} />
+    <Route path="login" element={<LoginPage />} />
 
     <Route
       path="/"
@@ -22,14 +24,21 @@ const AppRoutes = () => (
       }
     >
       <Route index element={<Patients />} />
+
       <Route path="patients" element={<Patients />} />
+      <Route path="patient/information" element={<PatientInformation />} />
+      <Route path="patient/information/medical-record" element={<MedicalRecordPage />} />
+
       <Route path="users" element={<Users />} />
+
+      {/* Cadastros */}
       <Route path="patient/register" element={<PatientRegisterPage />} />
-      <Route path="patient/companion-register" element={<CompanionRegisterPage />} />
+      <Route path="patient/companion/register" element={<CompanionRegisterPage />} />
       <Route path="user/register" element={<UserRegisterPage />} />
+
+      <Route path="*" element={<NotFoundPage />} />
     </Route>
 
-    <Route path="*" element={<NotFoundPage />} />
   </Routes>
 );
 
