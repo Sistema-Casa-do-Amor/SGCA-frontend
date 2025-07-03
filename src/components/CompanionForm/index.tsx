@@ -27,6 +27,7 @@ const RegisterCompanionForm = (
   const companionAddressValue = watch("enderecoAcompanhante");
   const companionNeighborhoodValue = watch("bairroAcompanhante");
   const companionComplementValue = watch("complementoAcompanhante");
+  const companionNameValue = watch("acompanhanteNome");
 
   return (
     <Grid container spacing={{ xs: 2, md: 3 }} sx={{ padding: '26px', maxWidth: '1200px' }}>
@@ -64,6 +65,9 @@ const RegisterCompanionForm = (
           error={!!errors.acompanhanteNome}
           helperText={errors.acompanhanteNome?.message}
           slotProps={{
+            inputLabel: {
+              shrink: !!companionNameValue,
+            },
             formHelperText: {
               sx: {
                 minHeight: '1.25em',
@@ -133,6 +137,9 @@ const RegisterCompanionForm = (
           error={!!errors.enderecoAcompanhante}
           helperText={errors.enderecoAcompanhante?.message}
           slotProps={{
+            inputLabel: {
+              shrink: !!companionAddressValue,
+            },
             formHelperText: {
               sx: {
                 maxHeight: '0.4em',

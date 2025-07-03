@@ -1,42 +1,72 @@
-import { css } from "@emotion/react";
-import Button from '@mui/material/Button';
+import { useEffect, useState } from "react";
+import {
+  Box,
+  FormControl,
+  IconButton,
+  Input,
+  InputAdornment,
+  InputLabel,
+  Typography,
+  CircularProgress,
+  Button,
+} from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 import { Link } from "react-router-dom";
-
-const headerContainer = css({
-  display: "flex",
-  alignItems: "center",
-  position: "relative",
-  width: "100%",
-  minHeight: "56px",
-  marginTop: "24px",
-  marginBottom: "24px",
-});
-
-const TitleStyles = css({
-  position: "absolute",
-  left: "45%",
-  transform: "translateX(-50%)",
-  fontSize: "24px",
-  color: "#000",
-  fontWeight: "600",
-  textAlign: "center",
-  margin: 0,
-});
-
-const buttonStyles = css({
-  marginLeft: "86%",
-  backgroundColor: "#000",
-  color: "#fff",
-  "&:hover": {
-    backgroundColor: "#333",
-  },
-});
+import TablePatients from "../../components/Table/TablePatients";
+import { buttonStyles, stylesContainer, searchContainer, TitleStyles } from "./styles";
 
 const Patients = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simular requisição
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div
+        css={stylesContainer}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+        }}
+      >
+        <CircularProgress />
+      </div>
+    );
+  }
+
   return (
-    <>
-      <div css={headerContainer}>
-        <h1 css={TitleStyles}>Pacientes</h1>
+    <div css={stylesContainer}>
+      <Box>
+        <Typography variant="h1" css={TitleStyles}>
+          Pacientes
+        </Typography>
+      </Box>
+
+      <Box css={searchContainer}>
+        <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+          <InputLabel htmlFor="search">Buscar Paciente</InputLabel>
+          <Input
+            id="search"
+            type="search"
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+
         <Button
           component={Link}
           to="/patient/register"
@@ -45,11 +75,11 @@ const Patients = () => {
         >
           Adicionar
         </Button>
-      </div>
-      {/* ...restante do conteúdo... */}
-    </>
+      </Box>
+
+      <TablePatients />
+    </div>
   );
 };
 
 export default Patients;
-

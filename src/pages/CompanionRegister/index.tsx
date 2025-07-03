@@ -5,13 +5,13 @@ import { useForm } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchAddressByCep } from "../../utils/cepService";
-import RegisterCompanionForm from "../../components/RegisterCompanionForm";
+import RegisterCompanionForm from "../../components/CompanionForm";
 import Snackbar from '@mui/material/Snackbar';
 import type { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { useNavigate } from "react-router-dom";
 import { companionSchema, type CompanionFormInputs } from "../../schemas/companionSchema";
-import { buttonStyles, cancelButtonStyles, headerContainer, saveButtonStyles, TitleStyles } from "../PatientRegister/styles";
+import { buttonStyles, cancelButtonStyles, stylesContainer, saveButtonStyles, TitleStyles } from "../PatientRegister/styles";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 const CompanionRegisterPage = () => {
@@ -214,10 +214,8 @@ const CompanionRegisterPage = () => {
 
   const handleConfirmSave = handleSubmit(handleSaveCompanion, onError);
 
-
-
   return (
-    <div css={headerContainer}>
+    <div css={stylesContainer}>
       <h1 css={TitleStyles}>Cadastrar Acompanhante</h1>
 
       <form

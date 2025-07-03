@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 import { fetchAddressByCep } from "../../utils/cepService";
 import PatientPersonalDataForm from "../../components/PatientForm/PatientPersonalDataForm";
 import PatientDetailsForm from "../../components/PatientForm/PatientDetailsForm";
-import { buttonStyles, cancelButtonStyles, headerContainer, saveButtonStyles, TitleStyles } from "./styles";
+import { buttonStyles, cancelButtonStyles, stylesContainer, saveButtonStyles, TitleStyles } from "./styles";
 import Snackbar from '@mui/material/Snackbar';
 import type { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
@@ -17,7 +17,7 @@ import ConfirmationDialog from "../../components/ConfirmationDialog";
 import type { PessoaFisicaDTO } from "../../api/api.gateway.dto";
 import { apiGateway } from "../../api/api.gateway";
 
-const RegisterPage = () => {
+const PatientRegisterPage = () => {
   const navigate = useNavigate();
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -102,7 +102,7 @@ const RegisterPage = () => {
       setOpenSaveDialog(false);
       showSnackbar("Paciente cadastrado com sucesso!", "success");
       setTimeout(() => {
-        navigate('/patient/companion-register');
+        navigate('/patient/companion/register');
       }, 2000)
     } catch (error) {
       console.error("Erro ao cadastrar paciente:", error);
@@ -175,7 +175,7 @@ const RegisterPage = () => {
   }, [cepValue, handleCepSearch]);
 
   return (
-    <div css={headerContainer}>
+    <div css={stylesContainer}>
       <h1 css={TitleStyles}>Cadastrar Paciente</h1>
       <form noValidate>
 
@@ -258,4 +258,4 @@ const RegisterPage = () => {
   );
 }
 
-export default RegisterPage;
+export default PatientRegisterPage;
