@@ -2,11 +2,12 @@ import { css } from "@emotion/react";
 import Button from '@mui/material/Button';
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import TableUsers from "../../components/Table/TableUsers";
 
 const headerContainer = css({
   display: "flex",
   alignItems: "center",
-  position: "relative",
+  flexDirection: 'column',
   width: "100%",
   minHeight: "56px",
   marginTop: "24px",
@@ -14,9 +15,6 @@ const headerContainer = css({
 });
 
 const TitleStyles = css({
-  position: "absolute",
-  left: "45%",
-  transform: "translateX(-50%)",
   fontSize: "24px",
   color: "#000",
   fontWeight: "600",
@@ -50,8 +48,8 @@ const Users = () => {
             Adicionar
           </Button>
         )}
+        <TableUsers />
       </div>
-      {/* ...restante do conteúdo... */}
     </>
   );
 };
