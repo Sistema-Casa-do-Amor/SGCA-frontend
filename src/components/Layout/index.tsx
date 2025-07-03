@@ -97,19 +97,6 @@ export default function Layout() {
       {/* Barra de cima */}
       <AppBar position="fixed" open={open}>
         <Toolbar>
-          {/* Botão para fechar a Drawer */}
-          {open && (
-            <IconButton
-              onClick={handleDrawerClose}
-              sx={{
-                color: 'white',
-                position: 'absolute', // Garante que os botões fiquem no mesmo local
-                left: '6px', // Ajuste a posição horizontal
-              }}
-            >
-              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          )}
 
           {/* Botão para abrir a Drawer */}
           {!open && (
@@ -127,6 +114,7 @@ export default function Layout() {
               <MenuIcon />
             </IconButton>
           )}
+
 
           <Typography variant="h6" noWrap component="div" sx={{ marginLeft: '30px' }}>
             SISTEMA DE GERENCIAMENTO DA CASA DO AMOR
@@ -175,8 +163,23 @@ export default function Layout() {
         <DrawerHeader>
           {/* icone */}
           <img src="casadoamor.png" alt="Icone Casa do Amor" style={{
-            margin: '0 auto',
+            margin: '5px auto', width: "80px",
           }} />
+
+          {/* Botão para fechar a Drawer */}
+          {open && (
+            <IconButton
+              onClick={handleDrawerClose}
+              sx={{
+                color: '#000000DA',
+                position: 'absolute', // Garante que os botões fiquem no mesmo local
+                right: '6px', // Ajuste a posição horizontal
+              }}
+            >
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          )}
+
 
         </DrawerHeader>
 

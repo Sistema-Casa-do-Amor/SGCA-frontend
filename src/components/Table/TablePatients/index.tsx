@@ -1,8 +1,16 @@
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from "@mui/material"
-import React, { useState } from "react";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Box, CircularProgress, Typography } from "@mui/material"
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiGateway } from "../../../api/api.gateway";
+
+interface Patient {
+    id: number;
+    nome: string;
+    cpf: string;
+    nomeDaMae: string;
+}
 
 interface Column {
     id: 'nome' | 'cpf' | 'nome-da-mae' | 'acoes';
@@ -18,25 +26,36 @@ const columns: readonly Column[] = [
     { id: 'acoes', label: 'Ações', minWidth: 170, align: 'center' },
 ]
 
-const rows = [
-    { id: 1, name: 'José Silva', cpf: '123456789', date: '10/05/2005' },
-    { id: 2, name: 'José Fernandes', cpf: '123456789', date: '10/05/2005' },
-    { id: 3, name: 'José Santos', cpf: '123456789', date: '10/05/2005' },
-    { id: 4, name: 'José Mendes', cpf: '123456789', date: '10/05/2005' },
-    { id: 5, name: 'José Novaes', cpf: '123456789', date: '10/05/2005' },
-    { id: 6, name: 'José Pereira', cpf: '123456789', date: '10/05/2005' },
-    { id: 7, name: 'José Guimarães', cpf: '123456789', date: '10/05/2005' },
-    { id: 8, name: 'José Campos', cpf: '123456789', date: '10/05/2005' },
-    { id: 9, name: 'José Vieira', cpf: '123456789', date: '10/05/2005' },
-    { id: 10, name: 'José Queiroz', cpf: '123456789', date: '10/05/2005' },
-    { id: 11, name: 'José Luz', cpf: '123456789', date: '10/05/2005' },
-]
-
 const TablePatients = () => {
     const navigate = useNavigate();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [patients, setPatients] = useState<Patient[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
     const delay = 1000;
+
+    // Fetch data from the API when the component mounts
+    useEffect(() => {
+        const fetchPatients = async () => {
+            try {
+                setLoading(true);
+                const response = await apiGateway.getAllPessoaFisica(); // Call your API method]
+                console.log("Response: ", response)
+                setPatients(response.data); // Assuming the list of patients is in response.data
+                setError(null); // Clear any previous errors
+            } catch (err) {
+                console.error("Error fetching patients:", err);
+                setError("Não foi possível carregar os pacientes. Tente novamente mais tarde.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPatients();
+    }, []); // Empty dependency array means this effect runs once when the component mounts
+
 
     const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
@@ -61,6 +80,24 @@ const TablePatients = () => {
         console.log('Editar ID: ', id);
     }
 
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+                <CircularProgress />
+                <Typography variant="h6" sx={{ marginLeft: 2 }}>Carregando pacientes...</Typography>
+            </Box>
+        );
+    }
+
+    if (error) {
+        console.log(error);
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+                <Typography color="error" variant="h6">{error}</Typography>
+            </Box>
+        );
+    }
+
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden', marginTop: 2 }}>
             <TableContainer sx={{ maxHeight: 440 }} >
@@ -79,39 +116,44 @@ const TablePatients = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row) => {
-                                return (
-                                    <TableRow key={row.id}>
-                                        <TableCell>{row.name}</TableCell>
-                                        <TableCell>{row.cpf}</TableCell>
-                                        <TableCell>{row.date}</TableCell>
+                        {patients.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} align="center">
+                                    Nenhum paciente encontrado.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            patients
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((patient) => (
+                                    <TableRow hover role="checkbox" tabIndex={-1} key={patient.id}>
+                                        <TableCell>{patient.nome}</TableCell>
+                                        <TableCell>{patient.cpf}</TableCell>
+                                        <TableCell>Maria</TableCell>
                                         <TableCell align="center">
                                             <IconButton color="primary"
-                                                onClick={() => handleViewMedicalRecords(row.id)}
+                                                onClick={() => handleViewMedicalRecords(patient.id)}
                                                 aria-label="visualizar"
                                             >
                                                 <VisibilityIcon />
                                             </IconButton>
                                             <IconButton color="success"
-                                                onClick={() => handleEdit(row.id)}
+                                                onClick={() => handleEdit(patient.id)}
                                                 aria-label="editar"
                                             >
                                                 <EditIcon />
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>
-                                )
-                            })
-                        }
+                                ))
+                        )}
                     </TableBody>
                 </Table>
             </TableContainer>
             <TablePagination
                 rowsPerPageOptions={[10, 25, 100]}
                 component="div"
-                count={rows.length}
+                count={patients.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}

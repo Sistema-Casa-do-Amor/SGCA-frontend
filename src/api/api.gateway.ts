@@ -1,10 +1,7 @@
 import axios, { type AxiosInstance } from 'axios';
-import { configDotenv } from "dotenv";
 import type { PessoaFisicaDTO } from './api.gateway.dto';
 
-configDotenv();
-
-const API_BASE_URL = process.env.API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8090";
 
 class ApiGateway {
   public gateway: AxiosInstance;
