@@ -1,14 +1,14 @@
 import axios, { type AxiosInstance } from 'axios';
 import type { PessoaFisicaDTO } from './api.gateway.dto';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8090";
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8090";
 
 class ApiGateway {
   public gateway: AxiosInstance;
 
   constructor() {
     this.gateway = axios.create({
-      baseURL: API_BASE_URL,
+      baseURL: "http://localhost:8090",
     });
   }
 

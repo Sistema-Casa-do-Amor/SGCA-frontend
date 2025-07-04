@@ -129,7 +129,7 @@ const TablePatients = () => {
                                     <TableRow hover role="checkbox" tabIndex={-1} key={patient.id}>
                                         <TableCell>{patient.nome}</TableCell>
                                         <TableCell>{patient.cpf}</TableCell>
-                                        <TableCell>Maria</TableCell>
+                                        <TableCell></TableCell>
                                         <TableCell align="center">
                                             <IconButton color="primary"
                                                 onClick={() => handleViewMedicalRecords(patient.id)}
