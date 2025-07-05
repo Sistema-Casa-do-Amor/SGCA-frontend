@@ -7,7 +7,7 @@ export const ContainerLoginStyles = css({
   justifyContent: "center",
   width: "475px",
   height: "500px",
-  backgroundColor: "#f5f5f5",
+  backgroundColor: "#fff",
   borderRadius: "8px",
   boxShadow: "0 0 14px rgba(0, 0, 0, 0.45)",
 });
@@ -41,7 +41,5 @@ export const TextFieldStyles = css({
 });
 
 export const imgStyles = css({
-  width: "100px",
-  height: "80px",
-  marginBottom: "20px",
+  width: "180px",
 });

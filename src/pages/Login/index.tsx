@@ -61,7 +61,7 @@ const Login = () => {
     <Box css={BoxStyles}>
       <Container css={ContainerLoginStyles}>
         <img
-          src="casadoamor.png"
+          src="logo1.png"
           alt="Logo Casa do Amor"
           css={imgStyles}
         />
