@@ -3,7 +3,7 @@ import { z } from 'zod';
 // --- REGEX Comuns ---
 export const CPF_REGEX = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
 export const DATE_REGEX = /^\d{2}\/\d{2}\/\d{4}$/;
-export const RG_REGEX = /^\d{2}\.\d{3}\.\d{3}-\d{2}$/;
+export const RG_REGEX = /^\d{2}\.\d{3}\.\d{3}-\d{1}$/;
 export const PHONE_REGEX = /^\d{2} \d{5}-\d{4}$/;
 export const CEP_REGEX = /^\d{5}-\d{3}$/;
 
@@ -26,7 +26,7 @@ export const dateSchema = z.string()
 export const rgSchema = z.string()
   .trim()
   .min(1, "RG é obrigatório.")
-  .regex(RG_REGEX, "Formato de RG inválido (XX.XXX.XXX-XX)."); // Ajuste o formato da mensagem se necessário
+  .regex(RG_REGEX, "Formato de RG inválido (XX.XXX.XXX-X).");
 
 export const phoneSchema = z.string()
   .trim()

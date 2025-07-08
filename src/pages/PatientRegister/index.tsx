@@ -14,9 +14,14 @@ import Snackbar from '@mui/material/Snackbar';
 import type { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import ConfirmationDialog from "../../components/ConfirmationDialog";
+import type { PessoaFisicaDTO } from "../../api/api.gateway.dto";
+import { apiGateway } from "../../api/api.gateway";
+import { useAuth } from "../../hooks/useAuth";
+import { formatDateToISO, removeNonNumeric } from "../../utils/formatters";
 
 const PatientRegisterPage = () => {
   const navigate = useNavigate();
+  const { token } = useAuth();
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -80,8 +85,31 @@ const PatientRegisterPage = () => {
   const handleSavePatient = async (data: PatientFormInputs) => {
     console.log("Formulário Válido, Dados:", data);
     try {
-      // **AQUI: Faça a chamada API para salvar o paciente.**
-      // Ex: await someApiService.createPatient(data);
+      if (!token) {
+        showSnackbar("Usuário não autenticado. Faça login novamente.", "error");
+        setTimeout(() => {
+          navigate('/login'); // Redireciona para a página de login
+        }, 2000)
+        return;
+      }
+
+      const paciente: PessoaFisicaDTO = {
+        nome: data.nomeCompletoPaciente,
+        telefone: removeNonNumeric(data.telefone),
+        dataNascimento: formatDateToISO(data.dataNascimento),
+        cpf: removeNonNumeric(data.cpfPaciente),
+        rg: removeNonNumeric(data.rg),
+        naturalidade: data.naturalidade,
+        profissao: data.profissao,
+        endereco: {
+          rua: data.endereco,
+          numero: data.numero,
+          bairro: data.bairro,
+          cep: removeNonNumeric(data.cep),
+        },
+      };
+
+      await apiGateway.createPessoaFisica(token, paciente); // chamada real
       setOpenSaveDialog(false);
       showSnackbar("Paciente cadastrado com sucesso!", "success");
       setTimeout(() => {
