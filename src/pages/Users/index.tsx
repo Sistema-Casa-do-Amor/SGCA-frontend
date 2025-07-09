@@ -8,10 +8,9 @@ const headerContainer = css({
   display: "flex",
   alignItems: "center",
   flexDirection: 'column',
-  width: "100%",
+  width: "90%",
   minHeight: "56px",
-  marginTop: "24px",
-  marginBottom: "24px",
+  margin: "24px auto",
 });
 
 const TitleStyles = css({

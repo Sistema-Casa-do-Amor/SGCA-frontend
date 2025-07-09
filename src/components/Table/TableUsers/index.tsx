@@ -19,14 +19,8 @@ const columns: readonly Column[] = [
 
 const rows = [
     { name: 'José Silva', function: 'Recepcionista', email: 'jose.silva@gmail.com', telephone: '77988025302' },
-    { name: 'José Silva', function: 'Recepcionista', email: 'jose.silva@gmail.com', telephone: '77988025302' },
-    { name: 'José Silva', function: 'Recepcionista', email: 'jose.silva@gmail.com', telephone: '77988025302' },
-    { name: 'José Silva', function: 'Recepcionista', email: 'jose.silva@gmail.com', telephone: '77988025302' },
-    { name: 'José Silva', function: 'Recepcionista', email: 'jose.silva@gmail.com', telephone: '77988025302' },
-    { name: 'José Silva', function: 'Recepcionista', email: 'jose.silva@gmail.com', telephone: '77988025302' },
-    { name: 'José Silva', function: 'Recepcionista', email: 'jose.silva@gmail.com', telephone: '77988025302' },
-    { name: 'José Silva', function: 'Recepcionista', email: 'jose.silva@gmail.com', telephone: '77988025302' },
-    { name: 'José Silva', function: 'Recepcionista', email: 'jose.silva@gmail.com', telephone: '77988025302' },    
+    { name: 'Amanda Novaes', function: 'Médica', email: 'amanda.novaes@gmail.com', telephone: '77988024556' },
+    { name: 'João Silva', function: 'Enfermeira', email: 'joao.silva@gmail.com', telephone: '77988024302' },
 ]
 
 const TableUsers = () => {
@@ -75,8 +69,8 @@ const TableUsers = () => {
                                         <TableCell>{row.telephone}</TableCell>
                                         <TableCell align="center">
                                             <IconButton color="success"
-                                            onClick={() => handleEdit(row.name)}
-                                            aria-label="editar"
+                                                onClick={() => handleEdit(row.name)}
+                                                aria-label="editar"
                                             >
                                                 <EditIcon />
                                             </IconButton>

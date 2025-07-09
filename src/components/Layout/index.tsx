@@ -162,8 +162,8 @@ export default function Layout() {
       >
         <DrawerHeader>
           {/* icone */}
-          <img src="casadoamor.png" alt="Icone Casa do Amor" style={{
-            margin: '5px auto', width: "80px",
+          <img src="logo2.png" alt="Icone Casa do Amor" style={{
+            margin: '5px auto 0', width: "80px",
           }} />
 
           {/* Botão para fechar a Drawer */}
@@ -183,7 +183,9 @@ export default function Layout() {
 
         </DrawerHeader>
 
-        <List>
+        <List sx={{
+          padding: '0px',
+        }}>
           <Divider sx={{
             maxWidth: '230px',
             margin: '0 auto',
