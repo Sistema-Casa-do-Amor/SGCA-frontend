@@ -1,14 +1,52 @@
-import { Alert, Button, CircularProgress, Snackbar, type AlertColor, type SnackbarCloseReason } from "@mui/material";
+import { Alert, Button, CircularProgress, css, Snackbar, type AlertColor, type SnackbarCloseReason } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { recordStyles, stylesContainer, TitleStyles } from "./styles";
 import { useCallback, useEffect, useState } from "react";
+import { apiGateway } from "../../api/api.gateway";
+
+interface Endereco {
+  bairro: string | null;
+  cep: string | null;
+  cidade: string | null;
+  complemento: string | null;
+  endereco: string | null;
+  estado: string | null;
+  numero: number | null;
+}
 
 interface PatientData {
   id: number;
-  name: string;
+  nome: string;
   cpf: string;
-  birthDate: string;
+  dataNascimento: string;
+  email: string;
+  endereco: Endereco;
+  naturalidade: string;
+  profissao: string;
+  rg: string;
+  telefone: string;
 }
+
+const btnStyles = css({
+  backgroundColor: '#09244B',
+  color: '#fff',
+  width: '200px',
+  '&:hover': {
+    backgroundColor: '#0C2F58'
+  }
+})
+
+const pStyles = css({
+  margin: '0px',
+
+})
+
+const pContainer = css({
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  gap: '16px'
+})
 
 const PatientInformation = () => {
   const navigate = useNavigate();
@@ -53,17 +91,14 @@ const PatientInformation = () => {
         try {
           setLoading(true);
           // Aqui seria seu fetch real:
-          // const response = await api.get(`/patients/${patientId}`);
+          const response = await apiGateway.getPessoaFisicaById(patientId);
+
+          console.log("yes", response.data)
           // setPatient(response.data);
 
           // Simulação de fetch com delay
           setTimeout(() => {
-            setPatient({
-              id: patientId,
-              name: "José da Silva",
-              cpf: "123.456.789-00",
-              birthDate: "01/01/1970"
-            });
+            setPatient(response.data);
             setLoading(false);
           }, 1500);
         } catch (error) {
@@ -95,34 +130,46 @@ const PatientInformation = () => {
     <div css={stylesContainer}>
       {patient && (
         <>
-          <h1 css={TitleStyles}>{patient.name}</h1>
-          <p>CPF: {patient.cpf}</p>
-          <p>Data de nascimento: {patient.birthDate}</p>
+          <h1 css={TitleStyles}>{patient.nome}</h1>
+          <div css={pContainer}>
+            <p css={pStyles}><strong>CPF:</strong> {patient.cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4') ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}><strong>Data de nascimento:</strong> {patient.dataNascimento.split('-').join('/') ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}><strong>E-mail:</strong> {patient.email ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}><strong>Naturalidade:</strong> {patient.naturalidade ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}><strong>Profissão: </strong>{patient.profissao ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}><strong>RG:</strong> {patient.rg.replace(/^(\d{2})(\d{3})(\d{3})(\d{1})$/, '$1.$2.$3-$4') ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}><strong>Telefone:</strong> {patient.telefone.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3') ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}> <strong>Endereço:</strong> {patient.endereco.endereco ?? 'Dado não encontrado'}, n° {patient.endereco.numero ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}><strong>Bairro:</strong> {patient.endereco.bairro ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}><strong>Cidade:</strong> {patient.endereco.cidade ?? 'Dado não encontrado'} - {patient.endereco.estado ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}><strong>CEP:</strong> {patient.endereco.cep ?? 'Dado não encontrado'}</p>
+            <p css={pStyles}><strong>Complemento:</strong> {patient.endereco.complemento ?? 'Dado não encontrado'}</p>
+          </div>
         </>
       )}
 
       <h1 css={TitleStyles}>Prontuários</h1>
       <div css={recordStyles}>
         <Button
-          sx={{ backgroundColor: "#FA444E", color: "white", width: "200px" }}
+          css={btnStyles}
           onClick={() => handleNavigate("medical-record")}
         >
           Médico
         </Button>
         <Button
-          sx={{ backgroundColor: "#FA444E", color: "white", width: "200px" }}
+          css={btnStyles}
           onClick={() => handleNavigate("nursing-record")}
         >
           Enfermagem
         </Button>
         <Button
-          sx={{ backgroundColor: "#FA444E", color: "white", width: "200px" }}
+          css={btnStyles}
           onClick={() => handleNavigate("nutrition-record")}
         >
           Nutrição
         </Button>
         <Button
-          sx={{ backgroundColor: "#FA444E", color: "white", width: "200px" }}
+          css={btnStyles}
           onClick={() => handleNavigate("psychology-record")}
         >
           Psicologia
